@@ -9,11 +9,11 @@ PACT_BROKER_TOKEN : $PACT_BROKER_TOKEN
 participant_name: $participant_name
 version: $version
 oas_file: $oas_file
-resuts_file: $resuts_file
+results_file: $results_file
 """
 
-OAS=$(base64 $OASFILE)
-RESULTS=$(base64 $RESULTSFILE)
+OAS=$(base64 $oas_file)
+RESULTS=$(base64 $results_file)
 
 # If you're here, then presumably success = true.
 PAYLOAD_JSON=$(cat <<EOF

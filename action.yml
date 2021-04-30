@@ -1,7 +1,7 @@
 name: "pact-publish-oas-action"
 description: "Publishes an OAS and test results to Pactflow (requires checkout action first)"
 branding:
-  icon: "check"
+  icon: "upload"
   color: "green"
 inputs:
   participant_name:
