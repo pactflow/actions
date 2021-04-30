@@ -1,9 +1,5 @@
 #!/usr/bin/env bash
 
-# NOTE: You must ensure additionalProperties in your OAS is set to false on any 
-#       response body, to ensure a consumer won't get false positives if they add
-#       a new field that isn't actually part of the spec.
-
 OAS=$(base64 $oas_file)
 RESULTS=$(base64 $results_file)
 
