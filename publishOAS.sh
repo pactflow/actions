@@ -3,14 +3,6 @@
 # NOTE: You must ensure additionalProperties in your OAS is set to false on any 
 #       response body, to ensure a consumer won't get false positives if they add
 #       a new field that isn't actually part of the spec.
-echo """
-PACT_BROKER: $PACT_BROKER
-PACT_BROKER_TOKEN : $PACT_BROKER_TOKEN
-participant_name: $participant_name
-version: $version
-oas_file: $oas_file
-results_file: $results_file
-"""
 
 OAS=$(base64 $oas_file)
 RESULTS=$(base64 $results_file)
@@ -33,6 +25,13 @@ EOF
 PAYLOAD=$(echo "$PAYLOAD_JSON" |tr -d '\n' | tr -d ' ')
 
 URL="$PACT_BROKER/contracts/provider/$participant_name/version/$VERSION"
+
+echo """
+PACT_BROKER_TOKEN : $PACT_BROKER_TOKEN
+oas_file: $oas_file
+results_file: $results_file
+PAYLOAD: $PAYLOAD
+"""
 
 RESPONSE=$(curl \
   -i \
