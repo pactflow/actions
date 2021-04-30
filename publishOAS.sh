@@ -20,11 +20,11 @@ EOF
 )
 PAYLOAD=$(echo "$PAYLOAD_JSON" |tr -d '\n' | tr -d ' ')
 
-URL="$PACT_BROKER/contracts/provider/$participant_name/version/$version"
+URL="$pact_broker/contracts/provider/$participant_name/version/$version"
 
 echo """
 URL: $URL
-PACT_BROKER_TOKEN : $PACT_BROKER_TOKEN
+pact_broker_token : $pact_broker_token
 oas_file: $oas_file
 results_file: $results_file
 PAYLOAD: $PAYLOAD
@@ -33,7 +33,7 @@ PAYLOAD: $PAYLOAD
 RESPONSE=$(curl \
   -i \
   -X PUT \
-  -H "Authorization: Bearer $PACT_BROKER_TOKEN" \
+  -H "Authorization: Bearer $pact_broker_token" \
   -H "Content-Type: application/json" \
   -d "$PAYLOAD" $URL)
 

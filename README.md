@@ -8,8 +8,8 @@ Publishes OAS and test evidence to a Pactflow server for 'bi-directional' testin
 env:
   version: "1.2.3"
   participant_name: "my-api-provider"
-  PACT_BROKER: ${{ secrets.PACT_BROKER }}
-  PACT_BROKER_TOKEN: ${{ secrets.PACT_BROKER_TOKEN }}
+  pact_broker: ${{ secrets.pact_broker }}
+  pact_broker_token: ${{ secrets.pact_broker_token }}
 
 jobs:
   pact-publish-oas-action:
