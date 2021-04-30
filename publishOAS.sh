@@ -24,7 +24,7 @@ EOF
 )
 PAYLOAD=$(echo "$PAYLOAD_JSON" |tr -d '\n' | tr -d ' ')
 
-URL="$PACT_BROKER/contracts/provider/$participant_name/version/$VERSION"
+URL="$PACT_BROKER/contracts/provider/$participant_name/version/$version"
 
 echo """
 URL: $URL
