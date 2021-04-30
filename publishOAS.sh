@@ -27,6 +27,7 @@ PAYLOAD=$(echo "$PAYLOAD_JSON" |tr -d '\n' | tr -d ' ')
 URL="$PACT_BROKER/contracts/provider/$participant_name/version/$VERSION"
 
 echo """
+URL: $URL
 PACT_BROKER_TOKEN : $PACT_BROKER_TOKEN
 oas_file: $oas_file
 results_file: $results_file
