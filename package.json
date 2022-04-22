@@ -1,0 +1,20 @@
+{
+  "name": "publish-oas",
+  "version": "1.0.0",
+  "description": "Publishes an OAS and test results to Pactflow (requires checkout action first).",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test:unit": "./node_modules/mocha/bin/mocha --recursive test/unit",
+    "test:unit:watch": "./node_modules/mocha/bin/mocha -w --recursive test/unit",
+    "lint": "standard ."
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "mocha": "^9.2.2",
+    "standard": "^16.0.4"
+  }
+}
