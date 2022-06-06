@@ -35,7 +35,7 @@ docker run --rm \
  -e PACT_BROKER_BASE_URL=$pact_broker \
  -e PACT_BROKER_TOKEN=$pact_broker_token \
   pactfoundation/pact-cli:latest \
-  publish-provider-contract \
+  pactflow publish-provider-contract \
   $oas_file \
     --provider $application_name \
     --provider-app-version $version \
