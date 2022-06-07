@@ -1,4 +1,4 @@
-name: "pact-publish-oas-action"
+name: "publish-provider-contract"
 description: "Publishes an OAS and test results to Pactflow (requires checkout action first)"
 branding:
   icon: "upload"

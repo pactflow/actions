@@ -2,6 +2,13 @@
 
 Publishes OAS and test evidence to a Pactflow server for 'bi-directional' testing (relies on [actions/checkout](https://github.com/marketplace/actions/checkout) being called first).
 
+## Pre-Requisities
+
+- A Pactflow account
+  - Don't have one - sign up 👉 [here](https://pactflow.io/try-for-free) - don't worry, the developer tier is free.
+- A Pactflow API Token
+  - Log in to your Pactflow account (`https://<your-subdomain>.pactflow.io`), and go to Settings > API Tokens - See [here](/#configuring-your-api-token) for the docs
+
 ## Example
 
 ```yaml
@@ -17,7 +24,7 @@ jobs:
     steps:
       # MANDATORY: Must use 'checkout' first
       - uses: actions/checkout@v2
-      - uses: pactflow/actions/publish-provider-contract
+      - uses: pactflow/actions/publish-provider-contract@v0.0.2
         env:
           oas_file: src/oas/user.yml
           results_file: src/results/report.md
