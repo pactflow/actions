@@ -1,0 +1,20 @@
+{
+  "name": "publish-pactfiles",
+  "version": "1.0.0",
+  "description": "Checks you can deploy based on target tag (i.e. an environment name).",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test:unit": "./node_modules/mocha/bin/mocha --recursive test/unit",
+    "test:unit:watch": "./node_modules/mocha/bin/mocha -w --recursive test/unit",
+    "lint": "standard ."
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "mocha": "^9.2.2",
+    "standard": "^16.0.4"
+  }
+}

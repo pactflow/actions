@@ -1,0 +1,29 @@
+name: "publish-provider-contract-docker"
+description: "Publishes an OAS and test results to Pactflow (requires checkout action first)"
+branding:
+  icon: "upload"
+  color: "green"
+inputs:
+  pact_broker:
+    description: "The url of your pact broker"
+    required: true
+  pact_broker_token:
+    description: "Your pact broker token"
+    required: true
+  application_name:
+    description: "The name of your application (usually project name)"
+    required: true
+  oas_file:
+    description: "Location of the OAS file"
+    required: true
+  results_file:
+    description: "Location of the test evidence file"
+    required: true
+  version:
+    description: "Version to publish"
+    required: true
+runs:
+  using: "composite"
+  steps:
+    - run: ${{ github.action_path }}/publishOAS.sh
+      shell: bash
