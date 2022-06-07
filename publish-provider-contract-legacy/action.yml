@@ -1,4 +1,4 @@
-name: "publish-provider-contract-docker"
+name: "publish-provider-contract-legacy"
 description: "Publishes an OAS and test results to Pactflow (requires checkout action first)"
 branding:
   icon: "upload"

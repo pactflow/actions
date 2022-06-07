@@ -15,7 +15,7 @@ jobs:
   pact-create-tag:
     runs-on: ubuntu-latest
     steps:
-      - uses: pactflow/actions/create-version-tag
+      - uses: pactflow/actions/create-version-tag@v0.0.2
         env:
           tag: prod
 ```
