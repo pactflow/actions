@@ -15,25 +15,28 @@ jobs:
   pact-can-i-deploy-latest:
     runs-on: ubuntu-latest
     steps:
-      - uses: pactflow/actions/can-i-deploy@v0.0.2
+      - uses: pactflow/actions/can-i-deploy@v0.0.4
         env:
           to: "test"
+          to_environment: "test" # set one of to, or to_environment
 
   # or ...
   pact-can-i-deploy-specific:
     runs-on: ubuntu-latest
     steps:
-      - uses: pactflow/actions/can-i-deploy@v0.0.2
+      - uses: pactflow/actions/can-i-deploy@v0.0.4
         env:
           version: "1.0.1"
           to: "test"
+          to_environment: "test" # set one of to, or to_environment
 
   # or ...
   pact-can-i-move-upstream:
     runs-on: ubuntu-latest
     steps:
-      - uses: pactflow/actions/can-i-deploy@v0.0.2
+      - uses: pactflow/actions/can-i-deploy@v0.0.4
         env:
           latest: "test"
           to: "stage"
+          to_environment: "test" # set one of to, or to_environment
 ```
