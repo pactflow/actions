@@ -21,19 +21,19 @@ if [ ${#MISSING[@]} -gt 0 ]; then
 fi
 
 COMMAND=
-if [ -z "$to" ] || [ -z "$to_env" ]; then
-    if [ -z "$to" ] && [ "$to_env" ]; then
-        echo "You set to_env"
-        COMMAND="--to-env $to_env"
-    elif [ -z "$to_env" ] && [ "$to" ]; then
+if [ -z "$to" ] || [ -z "$to_environment" ]; then
+    if [ -z "$to" ] && [ "$to_environment" ]; then
+        echo "You set to_environment"
+        COMMAND="--to-environment $to_environment"
+    elif [ -z "$to_environment" ] && [ "$to" ]; then
         echo "You set to"
         COMMAND="--to $to"
     else
-        echo "you need to set to, or to_env"
+        echo "you need to set to, or to_environment"
         exit 1
     fi
 else
-    echo "you can only set to, or to_env"
+    echo "you can only set to, or to_environment"
     exit 1
 fi
 

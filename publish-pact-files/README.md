@@ -17,7 +17,7 @@ jobs:
     steps:
       # MANDATORY: Must use 'checkout' first
       - uses: actions/checkout@v2
-      - uses: pactflow/actions/publish-pact-files@v0.0.2
+      - uses: pactflow/actions/publish-pact-files@v0.0.3
         env:
           pactfiles: src/pactfiles
 ```
