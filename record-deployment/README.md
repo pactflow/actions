@@ -15,7 +15,7 @@ jobs:
   pact-record-deployment:
     runs-on: ubuntu-latest
     steps:
-      - uses: pactflow/actions/record-deployment@v0.0.4
+      - uses: pactflow/actions/record-deployment@v0.0.6
         env:
           version: "1.0.1"
           environment: "test"
