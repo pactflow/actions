@@ -14,12 +14,15 @@ then
   exit 1
 fi
 
+branch=$(git rev-parse --abbrev-ref HEAD)
+
 echo """
 pact_broker: $pact_broker
 pact_broker_token: $pact_broker_token
 application_name: $application_name
 version: $version
 pactfiles: $pactfiles
+branch: $branch
 """
 
 docker run --rm \
@@ -30,4 +33,5 @@ docker run --rm \
   pactfoundation/pact-cli:latest \
   publish \
   $pactfiles \
-  --consumer-app-version $version
+  --consumer-app-version $version \
+  --branch $branch
