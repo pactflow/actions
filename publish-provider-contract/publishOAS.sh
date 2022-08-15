@@ -14,7 +14,7 @@ if [ ${#MISSING[@]} -gt 0 ]; then
   exit 1
 fi
 
-EXIT_CODE=0
+EXIT_CODE=${EXIT_CODE:-0}
 REPORT_FILE_CONTENT_TYPE=${REPORT_FILE_CONTENT_TYPE:-'text/plain'}
 VERIFIER_TOOL=${VERIFIER_TOOL:-'github-actions'}
 BRANCH=${GITHUB_REF#refs/heads/}
