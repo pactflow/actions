@@ -13,6 +13,7 @@ env:
 
 jobs:
   pact-record-deployment:
+    needs: can-i-deploy
     runs-on: ubuntu-latest
     steps:
       - uses: pactflow/actions/record-deployment@v0.0.6
