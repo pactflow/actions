@@ -24,10 +24,21 @@ jobs:
     steps:
       # MANDATORY: Must use 'checkout' first
       - uses: actions/checkout@v2
-      - uses: pactflow/actions/publish-provider-contract@v0.0.2
+      - name: Publish provider contract on passing test run   
+        if: success()
+        uses: pactflow/actions/publish-provider-contract@v0.0.5
         env:
           oas_file: src/oas/user.yml
           results_file: src/results/report.md
+      - name: Publish provider contract on failing test run
+        # ensure we publish results even if the tests fail   
+        if: failure() 
+        uses: pactflow/actions/publish-provider-contract@v0.0.5
+        env:
+          oas_file: src/oas/user.yml
+          results_file: src/results/report.md
+          # ensure we set the EXIT_CODE to ensure we upload a failing self-verification result 
+          EXIT_CODE: 1
 ```
 
 ## Notes
