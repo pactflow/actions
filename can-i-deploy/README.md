@@ -1,42 +1,31 @@
 # can-i-deploy action
 
-Checks you can deploy based on target tag (i.e. an environment name).
+Checks you can deploy based on target environment or tag
+
+Check https://docs.pact.io/pact_broker/can_i_deploy for an overview of can-i-deploy 
 
 ## Example
 
 ```yml
 # (This just saves defining these multiple times for different pact jobs)
 env:
-  application_name: "my-consumer-app"
-  pact_broker: ${{ secrets.PACT_BROKER }}
-  pact_broker_token: ${{ secrets.PACT_BROKER_TOKEN }}
+  application_name: "my-consumer-app" # The pacticipant name of which to check if it safe to deploy
+  pact_broker: ${{ secrets.PACT_BROKER }} # The base URL of the Pact Broker
+  pact_broker_token: ${{ secrets.PACT_BROKER_TOKEN }} # Pactflow Broker API Read/Write token
 
 jobs:
-  pact-can-i-deploy-latest:
+  pact-can-i-deploy:
     runs-on: ubuntu-latest
     steps:
       - uses: pactflow/actions/can-i-deploy@v0.0.4
         env:
-          to: "test"
-          to_environment: "test" # set one of to, or to_environment
+          version: "1.0.1" # The pacticipant/application version.
+          to_environment: "environment_name" # The environment into which the pacticipant(s) are to be
+                deployed
+          # to: "tag_name" # The tag that represents the branch or environment of the integrated applications for which you want to check the verification result status.
 
-  # or ...
-  pact-can-i-deploy-specific:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: pactflow/actions/can-i-deploy@v0.0.4
-        env:
-          version: "1.0.1"
-          to: "test"
-          to_environment: "test" # set one of to, or to_environment
-
-  # or ...
-  pact-can-i-move-upstream:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: pactflow/actions/can-i-deploy@v0.0.4
-        env:
-          latest: "test"
-          to: "stage"
-          to_environment: "test" # set one of to, or to_environment
 ```
+
+Set only 1 of `to_environment` or `to` depending on whether you are targeting your deployment location using `environments`(recommended) or `tags`
+
+Read more about migrating from tags to branchs [here](https://docs.pact.io/pact_broker/branches#migrating-from-tags-to-branches)
