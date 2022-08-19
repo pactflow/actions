@@ -8,8 +8,8 @@ Record deployment of an application to an environment
 # (This just saves defining these multiple times for different pact jobs)
 env:
   application_name: "my-consumer-app"
-  pact_broker: ${{ secrets.PACT_BROKER }}
-  pact_broker_token: ${{ secrets.PACT_BROKER_TOKEN }}
+  PACT_BROKER_BASE_URL: ${{ secrets.PACT_BROKER_BASE_URL }}
+  PACT_BROKER_TOKEN: ${{ secrets.PACT_BROKER_TOKEN }}
 
 jobs:
   pact-record-deployment:

@@ -1,0 +1,45 @@
+name: Actions Release
+
+on:
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        node-version: [16.x]
+        action: [
+            can-i-deploy,
+            create-version-tag,
+            publish-pact-files,
+            # publish-provider-contract,
+            publish-provider-contract-legacy,
+            record-deployment,
+          ]
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Use Node.js 16.x for ${{ matrix.action }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16.x
+          cache: "npm"
+          cache-dependency-path: ${{ matrix.action }}/package-lock.json
+      - run: npm ci
+        working-directory: ${{ matrix.action }}
+      - run: npm run test:unit
+        name: test ${{ matrix.action }}
+        working-directory: ${{ matrix.action }}
+
+  release:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: K-Phoen/semver-release-action@master
+        with:
+          release_branch: main
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

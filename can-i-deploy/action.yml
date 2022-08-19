@@ -4,10 +4,10 @@ branding:
   icon: "check"
   color: "green"
 inputs:
-  pact_broker:
+  PACT_BROKER_BASE_URL:
     description: "The url of your pact broker"
     required: true
-  pact_broker_token:
+  PACT_BROKER_TOKEN:
     description: "Your pact broker token"
     required: true
   application_name:

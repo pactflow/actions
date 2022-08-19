@@ -9,8 +9,8 @@ Publishes OAS and test evidence to a Pactflow server for 'bi-directional' testin
 env:
   version: "1.2.3"
   application_name: "my-api-provider"
-  pact_broker: ${{ secrets.PACT_BROKER }}
-  pact_broker_token: ${{ secrets.PACT_BROKER_TOKEN }}
+  PACT_BROKER_BASE_URL: ${{ secrets.PACT_BROKER_BASE_URL }}
+  PACT_BROKER_TOKEN: ${{ secrets.PACT_BROKER_TOKEN }}
 
 jobs:
   pact-publish-oas-action:
