@@ -96,17 +96,8 @@ jobs:
         env:
           pactfiles: test/pact.json
 
-  pact-create-version-tag:
-    needs: publish-pact-files
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: ./create-version-tag
-        env:
-          tag: ${{ env.environment }}
-
   pact-can-i-deploy-consumer:
-    needs: pact-create-version-tag
+    needs: publish-pact-files
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -122,3 +113,12 @@ jobs:
       - uses: ./record-deployment
         env:
           environment: ${{ env.environment }}
+
+  pact-create-version-tag:
+    needs: pact-record-deployment-consumer
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ./create-version-tag
+        env:
+          tag: ${{ env.environment }}
