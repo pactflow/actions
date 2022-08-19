@@ -48,7 +48,6 @@ jobs:
     steps:
       # MANDATORY: Must use 'checkout' first
       - uses: actions/checkout@v2
-      - run: cat ./publish-provider-contract
       - name: Publish provider contract on passing test run
         if: success()
         uses: ./publish-provider-contract
