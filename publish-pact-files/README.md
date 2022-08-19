@@ -9,11 +9,12 @@ Publishes pactfiles to a Pactflow server (relies on [actions/checkout](https://g
 env:
   version: "1.2.3"
   application_name: "my_api_consumer"
-  pact_broker: ${{ secrets.PACT_BROKER }}
-  pact_broker_token: ${{ secrets.PACT_BROKER_TOKEN }}
+  PACT_BROKER_BASE_URL: ${{ secrets.PACT_BROKER_BASE_URL }}
+  PACT_BROKER_TOKEN: ${{ secrets.PACT_BROKER_TOKEN }}
 
 jobs:
   publish-pact-files:
+    runs-on: ubuntu-latest
     steps:
       # MANDATORY: Must use 'checkout' first
       - uses: actions/checkout@v2

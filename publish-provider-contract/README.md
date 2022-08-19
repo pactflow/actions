@@ -16,28 +16,29 @@ Publishes OAS and test evidence to a Pactflow server for 'bi-directional' testin
 env:
   version: "1.2.3"
   application_name: "my-api-provider"
-  pact_broker: ${{ secrets.PACT_BROKER }}
-  pact_broker_token: ${{ secrets.PACT_BROKER_TOKEN }}
+  PACT_BROKER_BASE_URL: ${{ secrets.PACT_BROKER_BASE_URL }}
+  PACT_BROKER_TOKEN: ${{ secrets.PACT_BROKER_TOKEN }}
 
 jobs:
   pact-publish-oas-action:
+    runs-on: ubuntu-latest
     steps:
       # MANDATORY: Must use 'checkout' first
       - uses: actions/checkout@v2
-      - name: Publish provider contract on passing test run   
+      - name: Publish provider contract on passing test run
         if: success()
         uses: pactflow/actions/publish-provider-contract@v0.0.5
         env:
           oas_file: src/oas/user.yml
           results_file: src/results/report.md
       - name: Publish provider contract on failing test run
-        # ensure we publish results even if the tests fail   
-        if: failure() 
+        # ensure we publish results even if the tests fail
+        if: failure()
         uses: pactflow/actions/publish-provider-contract@v0.0.5
         env:
           oas_file: src/oas/user.yml
           results_file: src/results/report.md
-          # ensure we set the EXIT_CODE to ensure we upload a failing self-verification result 
+          # ensure we set the EXIT_CODE to ensure we upload a failing self-verification result
           EXIT_CODE: 1
 ```
 

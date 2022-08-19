@@ -6,8 +6,8 @@ const dockerMock = "./test/unit/docker-mock.sh";
 const scriptTotest = "./recordDeployment.sh";
 
 const mandatoryVars = {
-  pact_broker: "pact_broker-set",
-  pact_broker_token: "pact_broker_token-set",
+  PACT_BROKER_BASE_URL: "PACT_BROKER_BASE_URL-set",
+  PACT_BROKER_TOKEN: "PACT_BROKER_TOKEN-set",
   application_name: "application_name-set",
   version: "version-set",
   environment: "environment-set",
@@ -19,13 +19,13 @@ const dockerCallParameters = [
   [
     "sets PACT_BROKER_BASE_URL",
     new RegExp(
-      `docker .* -e PACT_BROKER_BASE_URL=${mandatoryVars.pact_broker}`
+      `docker .* -e PACT_BROKER_BASE_URL=${mandatoryVars.PACT_BROKER_BASE_URL}`
     ),
   ],
   [
     "sets PACT_BROKER_TOKEN",
     new RegExp(
-      `docker .* -e PACT_BROKER_TOKEN=${mandatoryVars.pact_broker_token}`
+      `docker .* -e PACT_BROKER_TOKEN=${mandatoryVars.PACT_BROKER_TOKEN}`
     ),
   ],
   ["uses latest pact-cli", /docker .* -e .*pactfoundation\/pact-cli:latest/],

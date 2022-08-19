@@ -1,0 +1,120 @@
+name: Actions test
+
+on:
+  push:
+  pull_request:
+
+env:
+  version: ${{ github.sha }}
+  environment: production
+  application_name: "actions-consumer"
+  PACT_BROKER_BASE_URL: https://testdemo.pactflow.io
+  PACT_BROKER_TOKEN: ${{ secrets.PACTFLOW_TOKEN_FOR_CI_CD_WORKSHOP }}
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        node-version: [16.x]
+        action: [
+            can-i-deploy,
+            create-version-tag,
+            publish-pact-files,
+            # publish-provider-contract,
+            publish-provider-contract-legacy,
+            record-deployment,
+          ]
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Use Node.js 16.x for ${{ matrix.action }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16.x
+          cache: "npm"
+          cache-dependency-path: ${{ matrix.action }}/package-lock.json
+      - run: npm ci
+        working-directory: ${{ matrix.action }}
+      - run: npm run test:unit
+        name: test ${{ matrix.action }}
+        working-directory: ${{ matrix.action }}
+
+  pact-publish-oas-action:
+    # needs: test
+    runs-on: ubuntu-latest
+    steps:
+      # MANDATORY: Must use 'checkout' first
+      - uses: actions/checkout@v2
+      - run: cat ./publish-provider-contract
+      - name: Publish provider contract on passing test run
+        if: success()
+        uses: ./publish-provider-contract
+        env:
+          application_name: actions-provider
+          oas_file: test/products.yml
+          results_file: test/report.md
+      - name: Publish provider contract on failing test run
+        # ensure we publish results even if the tests fail
+        if: failure()
+        uses: ./publish-provider-contract
+        env:
+          application_name: actions-provider
+          oas_file: test/products.yml
+          results_file: test/report.md
+          # ensure we set the EXIT_CODE to ensure we upload a failing self-verification result
+          EXIT_CODE: 1
+
+  pact-can-i-deploy-provider:
+    needs: pact-publish-oas-action
+    runs-on: ubuntu-latest
+    steps:
+      - uses: ./can-i-deploy
+        env:
+          to_environment: ${{ env.environment }}
+          application_name: actions-provider
+
+  pact-record-deployment-provider:
+    needs: pact-can-i-deploy-provider
+    runs-on: ubuntu-latest
+    steps:
+      - uses: ./record-deployment
+        env:
+          environment: ${{ env.environment }}
+          application_name: actions-provider
+
+  publish-pact-files:
+    needs: pact-record-deployment-provider
+    runs-on: ubuntu-latest
+    steps:
+      # MANDATORY: Must use 'checkout' first
+      - uses: actions/checkout@v2
+      - uses: ./publish-pact-files
+        env:
+          pactfiles: test/pact.json
+
+  pact-create-version-tag:
+    needs: publish-pact-files
+    runs-on: ubuntu-latest
+    steps:
+      - uses: ./create-version-tag
+        env:
+          tag: ${{ env.environment }}
+
+  pact-can-i-deploy-consumer:
+    needs: pact-create-version-tag
+    runs-on: ubuntu-latest
+    steps:
+      - uses: ./can-i-deploy
+        env:
+          to_environment: ${{ env.environment }}
+
+  pact-record-deployment-consumer:
+    needs: pact-can-i-deploy-consumer
+    runs-on: ubuntu-latest
+    steps:
+      - uses: ./record-deployment
+        env:
+          environment: ${{ env.environment }}

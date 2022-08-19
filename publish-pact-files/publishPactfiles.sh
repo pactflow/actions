@@ -1,14 +1,13 @@
 #!/usr/bin/env bash
 
 MISSING=()
-[ ! "$pact_broker" ] && MISSING+=( "pact_broker" )
-[ ! "$pact_broker_token" ] && MISSING+=( "pact_broker_token" )
-[ ! "$application_name" ] && MISSING+=( "application_name" )
-[ ! "$version" ] && MISSING+=( "version" )
-[ ! "$pactfiles" ] && MISSING+=( "pactfiles" )
+[ ! "$PACT_BROKER_BASE_URL" ] && MISSING+=("PACT_BROKER_BASE_URL")
+[ ! "$PACT_BROKER_TOKEN" ] && MISSING+=("PACT_BROKER_TOKEN")
+[ ! "$application_name" ] && MISSING+=("application_name")
+[ ! "$version" ] && MISSING+=("version")
+[ ! "$pactfiles" ] && MISSING+=("pactfiles")
 
-if [ ${#MISSING[@]} -gt 0 ]
-then
+if [ ${#MISSING[@]} -gt 0 ]; then
   echo "ERROR: The following environment variables are not set:"
   printf '\t%s\n' "${MISSING[@]}"
   exit 1
@@ -17,8 +16,8 @@ fi
 branch=$(git rev-parse --abbrev-ref HEAD)
 
 echo """
-pact_broker: $pact_broker
-pact_broker_token: $pact_broker_token
+PACT_BROKER_BASE_URL: $PACT_BROKER_BASE_URL
+PACT_BROKER_TOKEN: $PACT_BROKER_TOKEN
 application_name: $application_name
 version: $version
 pactfiles: $pactfiles
@@ -26,10 +25,10 @@ branch: $branch
 """
 
 docker run --rm \
- -w ${PWD} \
- -v ${PWD}:${PWD} \
- -e PACT_BROKER_BASE_URL=$pact_broker \
- -e PACT_BROKER_TOKEN=$pact_broker_token \
+  -w ${PWD} \
+  -v ${PWD}:${PWD} \
+  -e PACT_BROKER_BASE_URL=$PACT_BROKER_BASE_URL \
+  -e PACT_BROKER_TOKEN=$PACT_BROKER_TOKEN \
   pactfoundation/pact-cli:latest \
   publish \
   $pactfiles \

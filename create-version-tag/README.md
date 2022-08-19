@@ -9,7 +9,7 @@ Creates a tag on this version.
 env:
   version: "1.2.3"
   application_name: "my-api-provider"
-  pact_broker: ${{ secrets.PACT_BROKER }}
+  PACT_BROKER_BASE_URL: ${{ secrets.PACT_BROKER_BASE_URL }}
 
 jobs:
   pact-create-tag:

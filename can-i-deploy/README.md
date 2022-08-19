@@ -2,7 +2,7 @@
 
 Checks you can deploy based on target environment or tag
 
-Check https://docs.pact.io/pact_broker/can_i_deploy for an overview of can-i-deploy 
+Check https://docs.pact.io/pact_broker/can_i_deploy for an overview of can-i-deploy
 
 ## Example
 
@@ -10,8 +10,8 @@ Check https://docs.pact.io/pact_broker/can_i_deploy for an overview of can-i-dep
 # (This just saves defining these multiple times for different pact jobs)
 env:
   application_name: "my-consumer-app" # The pacticipant name of which to check if it safe to deploy
-  pact_broker: ${{ secrets.PACT_BROKER }} # The base URL of the Pact Broker
-  pact_broker_token: ${{ secrets.PACT_BROKER_TOKEN }} # Pactflow Broker API Read/Write token
+  PACT_BROKER_BASE_URL: ${{ secrets.PACT_BROKER_BASE_URL }} # The base URL of the Pact Broker
+  PACT_BROKER_TOKEN: ${{ secrets.PACT_BROKER_TOKEN }} # Pactflow Broker API Read/Write token
 
 jobs:
   pact-can-i-deploy:
