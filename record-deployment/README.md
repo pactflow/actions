@@ -16,7 +16,7 @@ jobs:
     needs: can-i-deploy
     runs-on: ubuntu-latest
     steps:
-      - uses: pactflow/actions/record-deployment@v0.0.6
+      - uses: pactflow/actions/record-deployment@v1.0.0
         env:
           version: "1.0.1"
           environment: "test"

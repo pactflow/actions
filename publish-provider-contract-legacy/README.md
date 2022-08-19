@@ -17,7 +17,7 @@ jobs:
     steps:
       # MANDATORY: Must use 'checkout' first
       - uses: actions/checkout@v2
-      - uses: pactflow/actions/publish-provider-contract-legacy@v0.0.2
+      - uses: pactflow/actions/publish-provider-contract-legacy@v1.0.0
         env:
           oas_file: src/oas/user.yml
           results_file: src/results/report.md
