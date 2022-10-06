@@ -10,9 +10,6 @@ inputs:
   PACT_BROKER_TOKEN:
     description: "Your pact broker token"
     required: true
-  application_name:
-    description: "The name of your application (usually project name)"
-    required: true
   pactfiles:
     description: "Location of the Pact files"
     required: true
