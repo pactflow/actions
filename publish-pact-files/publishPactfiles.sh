@@ -33,4 +33,4 @@ docker run --rm \
   publish \
   $pactfiles \
   --consumer-app-version $version \
-  --branch $branch
+  --auto-detect-version-properties
