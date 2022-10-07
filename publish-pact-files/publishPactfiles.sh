@@ -28,5 +28,6 @@ docker run --rm \
   -v ${PWD}:${PWD} \
   -e PACT_BROKER_BASE_URL=$PACT_BROKER_BASE_URL \
   -e PACT_BROKER_TOKEN=$PACT_BROKER_TOKEN \
+  -e GITHUB_HEAD_REF=$GITHUB_HEAD_REF \
   you54f/pact-cli:latest \
   printenv | grep -e GITHUB
