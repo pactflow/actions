@@ -8,7 +8,6 @@ const scriptTotest = "./publishPactfiles.sh";
 const mandatoryVars = {
   PACT_BROKER_BASE_URL: "PACT_BROKER_BASE_URL-set",
   PACT_BROKER_TOKEN: "PACT_BROKER_TOKEN-set",
-  version: "version-set",
   pactfiles: "pactfiles-set",
 };
 
@@ -31,10 +30,10 @@ const dockerCallParameters = [
   ],
   ["uses latest pact-cli", /docker .* -e .*pactfoundation\/pact-cli:latest/],
   ["uses publish", /pact-cli.* publish /],
-  [
-    "sets version",
-    new RegExp(`publish.* --consumer-app-version ${mandatoryVars.version}`),
-  ],
+  // [
+  //   "sets version",
+  //   new RegExp(`publish.* --consumer-app-version ${mandatoryVars.version}`),
+  // ],
   ["sets pactfiles", new RegExp(`publish.* ${mandatoryVars.pactfiles}`)],
 ];
 

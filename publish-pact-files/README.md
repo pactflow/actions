@@ -7,8 +7,6 @@ Publishes pactfiles to a Pactflow server (relies on [actions/checkout](https://g
 ```yaml
 # (This just saves defining these multiple times for different pact jobs)
 env:
-  version: "1.2.3"
-  application_name: "my_api_consumer"
   PACT_BROKER_BASE_URL: ${{ secrets.PACT_BROKER_BASE_URL }}
   PACT_BROKER_TOKEN: ${{ secrets.PACT_BROKER_TOKEN }}
 
@@ -21,4 +19,8 @@ jobs:
       - uses: pactflow/actions/publish-pact-files@v1.0.1
         env:
           pactfiles: src/pactfiles
+          version: "1.2.3" # optional, defaults to git sha if not specified
+          branch: main # optional, defaults to git branch if not specified
+          tag: main # optional, defaults to not set if not specified
+          tag_with_git_branch: false # optional, defaults to not false if not set. will auto tag with user specified branch, or set to auto detected branch
 ```
