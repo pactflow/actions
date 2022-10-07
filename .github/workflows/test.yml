@@ -92,6 +92,7 @@ jobs:
     steps:
       # MANDATORY: Must use 'checkout' first
       - uses: actions/checkout@v2
+      - run: printenv | grep -e GITHUB
       - uses: ./publish-pact-files
         env:
           pactfiles: test/pact.json
