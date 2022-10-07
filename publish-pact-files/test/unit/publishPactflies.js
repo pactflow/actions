@@ -29,7 +29,8 @@ const dockerCallParameters = [
       `docker .* -e PACT_BROKER_TOKEN=${mandatoryVars.PACT_BROKER_TOKEN}`
     ),
   ],
-  ["uses latest pact-cli", /docker .* -e .*pactfoundation\/pact-cli:latest/],
+  // ["uses latest pact-cli", /docker .* -e .*pactfoundation\/pact-cli:latest/],
+  ["uses latest pact-cli", /docker .* -e .*you54f\/pact-cli:latest/],
   ["uses publish", /pact-cli.* publish /],
   [
     "sets version",
