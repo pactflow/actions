@@ -29,7 +29,4 @@ docker run --rm \
   -e PACT_BROKER_BASE_URL=$PACT_BROKER_BASE_URL \
   -e PACT_BROKER_TOKEN=$PACT_BROKER_TOKEN \
   you54f/pact-cli:latest \
-  printenv | grep -e GITHUB && publish \
-  $pactfiles \
-  --consumer-app-version $version \
-  --auto-detect-version-properties
+  printenv | grep -e GITHUB
