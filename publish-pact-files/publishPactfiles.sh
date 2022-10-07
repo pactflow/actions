@@ -29,7 +29,7 @@ docker run --rm \
   -v ${PWD}:${PWD} \
   -e PACT_BROKER_BASE_URL=$PACT_BROKER_BASE_URL \
   -e PACT_BROKER_TOKEN=$PACT_BROKER_TOKEN \
-  pactfoundation/pact-cli:latest \
+  you54f/pact-cli:latest \
   publish \
   $pactfiles \
   --consumer-app-version $version \
