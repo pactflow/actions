@@ -13,6 +13,7 @@ if [ ${#MISSING[@]} -gt 0 ]; then
 fi
 
 branch=$(git rev-parse --abbrev-ref HEAD)
+printenv | grep -e GITHUB
 
 echo """
 PACT_BROKER_BASE_URL: $PACT_BROKER_BASE_URL
@@ -28,7 +29,7 @@ docker run --rm \
   -e PACT_BROKER_BASE_URL=$PACT_BROKER_BASE_URL \
   -e PACT_BROKER_TOKEN=$PACT_BROKER_TOKEN \
   you54f/pact-cli:latest \
-  publish \
+  printenv | grep -e GITHUB && publish \
   $pactfiles \
   --consumer-app-version $version \
   --auto-detect-version-properties
