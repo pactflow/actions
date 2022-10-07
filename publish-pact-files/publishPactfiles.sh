@@ -3,7 +3,6 @@
 MISSING=()
 [ ! "$PACT_BROKER_BASE_URL" ] && MISSING+=("PACT_BROKER_BASE_URL")
 [ ! "$PACT_BROKER_TOKEN" ] && MISSING+=("PACT_BROKER_TOKEN")
-[ ! "$application_name" ] && MISSING+=("application_name")
 [ ! "$version" ] && MISSING+=("version")
 [ ! "$pactfiles" ] && MISSING+=("pactfiles")
 
@@ -18,7 +17,6 @@ branch=$(git rev-parse --abbrev-ref HEAD)
 echo """
 PACT_BROKER_BASE_URL: $PACT_BROKER_BASE_URL
 PACT_BROKER_TOKEN: $PACT_BROKER_TOKEN
-application_name: $application_name
 version: $version
 pactfiles: $pactfiles
 branch: $branch

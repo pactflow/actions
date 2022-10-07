@@ -27,14 +27,14 @@ jobs:
       - uses: actions/checkout@v2
       - name: Publish provider contract on passing test run
         if: success()
-        uses: pactflow/actions/publish-provider-contract@v1.0.0
+        uses: pactflow/actions/publish-provider-contract@v1.0.1
         env:
           oas_file: src/oas/user.yml
           results_file: src/results/report.md
       - name: Publish provider contract on failing test run
         # ensure we publish results even if the tests fail
         if: failure()
-        uses: pactflow/actions/publish-provider-contract@v1.0.0
+        uses: pactflow/actions/publish-provider-contract@v1.0.1
         env:
           oas_file: src/oas/user.yml
           results_file: src/results/report.md
