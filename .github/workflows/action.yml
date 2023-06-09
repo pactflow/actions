@@ -1,0 +1,47 @@
+name: Test pactflow/actions@main
+
+on: 
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+  
+jobs:
+  test_cli_action:
+    strategy:
+      matrix:
+        os: [ubuntu-latest,windows-latest,macos-latest]
+      fail-fast: false
+    runs-on: ${{ matrix.os }}
+    name: test pact cli action
+    steps:
+      - uses: actions/checkout@v3
+      - id: pact-cli
+        uses: pactflow/actions@main
+      - name: pact-broker on bash
+        run: pact-broker help
+        if: runner.os != 'windows'
+        shell: bash
+      - name: pact-broker on sh
+        run: pact-broker help
+        if: runner.os != 'windows'
+        shell: sh
+      - name: pact-broker.bat on cmd
+        run: pact-broker.bat help
+        if: runner.os == 'windows'
+        shell: cmd
+      - name: pact-broker.bat on sh
+        run: pact-broker.bat help
+        if: runner.os == 'windows'
+        shell: sh
+      - name: pact-broker.bat on bash
+        run: pact-broker.bat help
+        if: runner.os == 'windows'
+        shell: bash
+      - name: pact-broker.bat on powershell
+        run: pact-broker.bat help
+        if: runner.os == 'windows'
+        shell: powershell
+      - name: pact-broker.bat on pwsh
+        run: pact-broker.bat help
+        if: runner.os == 'windows'
+        shell: pwsh
