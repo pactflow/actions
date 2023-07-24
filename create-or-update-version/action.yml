@@ -1,0 +1,23 @@
+name: "create-or-update-version"
+description: "Create or update pacticipant version by version number"
+branding:
+  icon: "check"
+  color: "green"
+inputs:
+  PACT_BROKER_BASE_URL:
+    description: "The url of your pact broker"
+    required: true
+  PACT_BROKER_TOKEN:
+    description: "Your pact broker token"
+    required: true
+  application_name:
+    description: "The name of your application (usually project name)"
+    required: true
+  version:
+    description: "The version of your application (usually commit sha)"
+    required: true
+runs:
+  using: "composite"
+  steps:
+    - run: ${{ github.action_path }}/createOrUpdateVersion.sh
+      shell: bash
