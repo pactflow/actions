@@ -3,6 +3,7 @@ name: Actions test
 on:
   push:
   pull_request:
+  workflow_dispatch:
 
 env:
   version: ${{ github.sha }}
