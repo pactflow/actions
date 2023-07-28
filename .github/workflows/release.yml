@@ -18,6 +18,7 @@ jobs:
             # publish-provider-contract,
             publish-provider-contract-legacy,
             record-deployment,
+            create-or-update-version,
           ]
 
     steps:

@@ -26,6 +26,7 @@ jobs:
             # publish-provider-contract,
             publish-provider-contract-legacy,
             record-deployment,
+            create-or-update-version,
           ]
 
     steps:
@@ -122,3 +123,10 @@ jobs:
       - uses: ./create-version-tag
         env:
           tag: ${{ env.environment }}
+
+  pact-create-or-update-version:
+    needs: pact-record-deployment-consumer
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ./create-or-update-version
