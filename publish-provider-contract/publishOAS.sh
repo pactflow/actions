@@ -18,6 +18,7 @@ EXIT_CODE=${EXIT_CODE:-0}
 REPORT_FILE_CONTENT_TYPE=${REPORT_FILE_CONTENT_TYPE:-'text/plain'}
 VERIFIER_TOOL=${VERIFIER_TOOL:-'github-actions'}
 BRANCH=${GITHUB_REF#refs/heads/}
+BUILD_URL="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
 
 echo """
 URL: $URL
@@ -26,6 +27,7 @@ oas_file: $oas_file
 results_file: $results_file
 EXIT_CODE: $EXIT_CODE
 BRANCH: $BRANCH
+BUILD_URL: $BUILD_URL
 """
 
 docker run --rm \
@@ -43,4 +45,5 @@ docker run --rm \
   --verification-exit-code=$EXIT_CODE \
   --verification-results $results_file \
   --verification-results-content-type $REPORT_FILE_CONTENT_TYPE \
-  --verifier $VERIFIER_TOOL
+  --verifier $VERIFIER_TOOL \
+  --build-url $BUILD_URL

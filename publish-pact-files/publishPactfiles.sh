@@ -13,6 +13,7 @@ if [ ${#MISSING[@]} -gt 0 ]; then
 fi
 
 branch=$(git rev-parse --abbrev-ref HEAD)
+build_url="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
 
 echo """
 PACT_BROKER_BASE_URL: $PACT_BROKER_BASE_URL
@@ -20,6 +21,7 @@ PACT_BROKER_TOKEN: $PACT_BROKER_TOKEN
 version: $version
 pactfiles: $pactfiles
 branch: $branch
+build_url: $build_url
 """
 
 docker run --rm \
@@ -31,4 +33,5 @@ docker run --rm \
   publish \
   $pactfiles \
   --consumer-app-version $version \
-  --branch $branch
+  --branch $branch \
+  --build-url $build_url
