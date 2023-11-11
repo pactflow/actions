@@ -1,0 +1,31 @@
+name: "delete-branch"
+description: "Deletes a pacticipant branch"
+branding:
+  icon: "check"
+  color: "green"
+inputs:
+  PACT_BROKER_BASE_URL:
+    description: "The url of your pact broker"
+    required: true
+  PACT_BROKER_TOKEN:
+    description: "Your pact broker token"
+    required: true
+  application_name:
+    description: "The name of your application (usually project name)"
+    required: true
+  branch:
+    description: "The branch of your application to delete"
+    required: true
+  error_when_not_found:
+    description: "Raise an error if the branch that is to be deleted is not found"
+    required: false
+    type: choice
+    options:
+      - true
+      - false
+
+runs:
+  using: "composite"
+  steps:
+    - run: ${{ github.action_path }}/deleteBranch.sh
+      shell: bash
