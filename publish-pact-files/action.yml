@@ -16,6 +16,9 @@ inputs:
   version:
     description: "Version to publish"
     required: true
+  tag:
+    description: "Optional tag"
+    required: false
 runs:
   using: "composite"
   steps:

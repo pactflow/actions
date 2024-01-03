@@ -22,7 +22,11 @@ version: $version
 pactfiles: $pactfiles
 branch: $branch
 build_url: $build_url
+tag: $tag
 """
+
+tagArg=""
+[ "$tag" ] && tagArg="--tag $tag"
 
 docker run --rm \
   -w ${PWD} \
@@ -34,4 +38,5 @@ docker run --rm \
   $pactfiles \
   --consumer-app-version $version \
   --branch $branch \
-  --build-url $build_url
+  --build-url $build_url \
+  $tagArg
