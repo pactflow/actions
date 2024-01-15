@@ -14,7 +14,7 @@ if [ ${#MISSING[@]} -gt 0 ]; then
 fi
 
 OPTIONS=
-if [ -z "${error_when_not_found}" ]
+if [ -z "${error_when_not_found}" ]; then
   if [ "${error_when_not_found}" = "true" ]; then
     OPTIONS="--error-when-not-found"
   elif [ "${error_when_not_found}" = "false" ]; then

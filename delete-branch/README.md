@@ -15,7 +15,7 @@ jobs:
   pact-can-i-deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: pactflow/actions/can-i-deploy@v1.0.1
+      - uses: pactflow/actions/delete-branch@v1.0.1
         env:
           branch: "test" # The branch name
           error_when_not_found: false # (Optional) - Raise an error if the branch that is to be deleted is not found, default true
