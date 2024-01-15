@@ -21,4 +21,5 @@ jobs:
       - uses: pactflow/actions/publish-pact-files@v1.0.1
         env:
           pactfiles: src/pactfiles
+          tags: foo # Optional
 ```
