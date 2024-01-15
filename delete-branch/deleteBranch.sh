@@ -14,13 +14,15 @@ if [ ${#MISSING[@]} -gt 0 ]; then
 fi
 
 OPTIONS=
-if [ "${error_when_not_found}" = "true" ]; then
-  OPTIONS="--error-when-not-found"
-elif [ "${error_when_not_found}" = "false" ]; then
-  OPTIONS="--no-error-when-not-found"
-else
-  echo "error_when_not_found was expected to be either 'true' or 'false' but was '${error_when_not_found}'"
-  exit 1
+if [ -z "${error_when_not_found}" ]; then
+  if [ "${error_when_not_found}" = "true" ]; then
+    OPTIONS="--error-when-not-found"
+  elif [ "${error_when_not_found}" = "false" ]; then
+    OPTIONS="--no-error-when-not-found"
+  else
+    echo "error_when_not_found was expected to be either 'true' or 'false' but was '${error_when_not_found}'"
+    exit 1
+  fi
 fi
 
 echo "
