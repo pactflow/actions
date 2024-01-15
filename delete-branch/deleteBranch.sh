@@ -36,7 +36,7 @@ docker run --rm \
   -e PACT_BROKER_BASE_URL=$PACT_BROKER_BASE_URL \
   -e PACT_BROKER_TOKEN=$PACT_BROKER_TOKEN \
   pactfoundation/pact-cli:latest \
-  broker can-i-deploy \
+  broker delete-branch \
   --pacticipant "$application_name" \
   --branch "$branch" \
   $OPTIONS \
