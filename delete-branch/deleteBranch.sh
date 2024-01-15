@@ -30,7 +30,9 @@ echo "
   PACT_BROKER_TOKEN: '$PACT_BROKER_TOKEN'
   application_name: '$application_name'
   branch: '$branch'
-  error_when_not_found: $error_when_not_found"
+  error_when_not_found: $error_when_not_found
+  OPTIONS: '$OPTIONS'
+  "
 
 docker run --rm \
   -e PACT_BROKER_BASE_URL=$PACT_BROKER_BASE_URL \

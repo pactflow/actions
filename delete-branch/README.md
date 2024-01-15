@@ -12,7 +12,7 @@ env:
   PACT_BROKER_TOKEN: ${{ secrets.PACT_BROKER_TOKEN }} # Pactflow Broker API Read/Write token
 
 jobs:
-  pact-can-i-deploy:
+  pact-delete-branch:
     runs-on: ubuntu-latest
     steps:
       - uses: pactflow/actions/delete-branch@v1.0.1
