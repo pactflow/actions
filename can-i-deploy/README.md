@@ -17,7 +17,7 @@ jobs:
   pact-can-i-deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: pactflow/actions/can-i-deploy@v1.0.1
+      - uses: pactflow/actions/can-i-deploy@v1.2.0
         env:
           version: "1.0.1" # The pacticipant/application version.
           to_environment: "environment_name" # The environment into which the pacticipant(s) are to be

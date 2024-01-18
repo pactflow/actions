@@ -18,5 +18,5 @@ jobs:
     steps:
       # MANDATORY: Must use 'checkout' first
       - uses: actions/checkout@v2
-      - uses: pactflow/actions/create-or-update-version@v1.1.0
+      - uses: pactflow/actions/create-or-update-version@v1.2.0
 ```
