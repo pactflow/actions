@@ -30,6 +30,7 @@ jobs:
         uses: pactflow/actions/publish-provider-contract@v1.2.0
         env:
           oas_file: src/oas/user.yml
+          oas_file_content_type: application/yml # optional, defaults to application/yaml
           results_file: src/results/report.md
       - name: Publish provider contract on failing test run
         # ensure we publish results even if the tests fail
@@ -44,6 +45,6 @@ jobs:
 
 ## Notes
 
-- If you change your `application_name` you willl need to inform your consumers (their pact tests rely on the name you use here).
-- Assumes 'success = true' (you can control this action by depending on an earliler successful test job).
+- If you change your `application_name` you will need to inform your consumers (their pact tests rely on the name you use here).
+- Assumes 'success = true' (you can control this action by depending on an earlier successful test job).
 - You must ensure `additionalProperties` in your OAS is set to `false` on any response body, to ensure a consumer won't get false positives if they add a new field that isn't actually part of the spec.

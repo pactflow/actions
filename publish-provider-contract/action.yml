@@ -16,6 +16,9 @@ inputs:
   oas_file:
     description: "Location of the OAS file"
     required: true
+  oas_file_content_type:
+    description: "Content type of the OAS file (optional, default 'application/yaml')"
+    required: false
   results_file:
     description: "Location of the test evidence file"
     required: true
