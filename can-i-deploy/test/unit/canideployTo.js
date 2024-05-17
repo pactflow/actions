@@ -84,4 +84,48 @@ describe("canideployTo", () => {
 
     assert.strictEqual(result.status, 0);
   });
+
+  describe("optional variables", () => {
+    it("sets retry_while_unknown and retry_interval", () => {
+      const result = spawnScript({
+        ...mandatoryVars,
+        retry_while_unknown: 5,
+        retry_interval: 10,
+      });
+
+      assert.match(result.stdout.toString(), /can-i-deploy.* --retry-while-unknown 5 --retry-interval 10/);
+      assert.strictEqual(result.status, 0);
+    });
+
+    it("fails when retry_while_unknown is not an integer", () => {
+      const result = spawnScript({
+        ...mandatoryVars,
+        retry_while_unknown: "foo",
+      });
+
+      assert.match(result.stdout.toString(), /retry_while_unknown has to be an integer/);
+      assert.strictEqual(result.status, 1);
+    });
+
+    it("fails when retry_interval is not an integer", () => {
+      const result = spawnScript({
+        ...mandatoryVars,
+        retry_while_unknown: 5,
+        retry_interval: "foo",
+      });
+
+      assert.match(result.stdout.toString(), /retry_interval has to be an integer/);
+      assert.strictEqual(result.status, 1);
+    });
+
+    it("does not set retry_interval when retry_while_unknown is not set", () => {
+      const result = spawnScript({
+        ...mandatoryVars,
+        retry_interval: 10,
+      });
+
+      assert.doesNotMatch(result.stdout.toString(), /--retry-interval/);
+      assert.strictEqual(result.status, 0);
+    });
+  });
 });

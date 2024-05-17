@@ -37,14 +37,29 @@ else
   exit 1
 fi
 
-echo $COMMAND
+OPTIONS=()
+if [ "$retry_while_unknown" ]; then
+  case $retry_while_unknown in
+      ''|*[!0-9]*) echo 'retry_while_unknown has to be an integer' && exit 1 ;;
+      *) OPTIONS+=("--retry-while-unknown $retry_while_unknown") ;;
+  esac
+
+  if [ "$retry_interval" ]; then
+    case $retry_interval in
+        ''|*[!0-9]*) echo 'retry_interval has to be an integer' && exit 1 ;;
+        *) OPTIONS+=("--retry-interval $retry_interval") ;;
+    esac
+  fi
+fi
 
 echo "
   PACT_BROKER_BASE_URL: '$PACT_BROKER_BASE_URL'
   PACT_BROKER_TOKEN: '$PACT_BROKER_TOKEN'
   application_name: '$application_name'
   VERSION: '$VERSION'
-  to: $to"
+  to: '$to'
+  COMMAND: '$COMMAND'
+  OPTIONS: '${OPTIONS[*]}'"
 
 docker run --rm \
   -e PACT_BROKER_BASE_URL=$PACT_BROKER_BASE_URL \
@@ -53,4 +68,5 @@ docker run --rm \
   broker can-i-deploy \
   --pacticipant "$application_name" \
   $VERSION \
-  $COMMAND
+  $COMMAND \
+  ${OPTIONS[*]}

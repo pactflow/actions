@@ -22,6 +22,16 @@ inputs:
   to:
     description: "The tag you wish to deploy to (test / stage / prod etc...)"
     required: true
+  retry_while_unknown:
+    description: |
+      Optional (default 0): the number of times to retry while there is an unknown
+      verification result (ie. the provider verification is likely still running)
+    required: false
+  retry_interval:
+    description: |
+      Optional (default 10): The time between retries in seconds.
+      Use in conjunction with --retry-while-unknown
+    required: false
 runs:
   using: "composite"
   steps:
