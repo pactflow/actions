@@ -3,9 +3,11 @@ description: A standalone pact command line executable using the ruby pact imple
 runs:
   using: "composite"
   steps:
-    - run: ./cli.sh
+  # https://docs.github.com/en/actions/sharing-automations/creating-actions/metadata-syntax-for-github-actions#runsstepsrun
+    - run: $GITHUB_ACTION_PATH/cli.sh
       shell: bash
-    - run: |
-        "$pwd\pact\bin\" >> $env:GITHUB_PATH
+    - name: add to path if windows
       if: runner.os == 'windows'
       shell: powershell
+      run: |
+        "$pwd\pact\bin\" >> $env:GITHUB_PATH
