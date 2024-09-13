@@ -7,11 +7,15 @@ const scriptTotest = "./createTag.sh";
 
 const mandatoryVars = {
   PACT_BROKER_BASE_URL: "PACT_BROKER_BASE_URL-set",
-  PACT_BROKER_TOKEN: "PACT_BROKER_TOKEN-set",
   application_name: "application_name-set",
-  version: "version-set",
   tag: "tag-set",
 };
+
+const optionalVars = {
+  PACT_BROKER_TOKEN: "PACT_BROKER_TOKEN-set",
+  version: "version-set",
+};
+
 
 // Examines the generated docker call to check each element is in place when called with `mandatoryVars`.
 const dockerCallParameters = [
@@ -25,7 +29,7 @@ const dockerCallParameters = [
   [
     "sets PACT_BROKER_TOKEN",
     new RegExp(
-      `docker .* -e PACT_BROKER_TOKEN=${mandatoryVars.PACT_BROKER_TOKEN}`
+      `docker .* -e PACT_BROKER_TOKEN=${optionalVars.PACT_BROKER_TOKEN}`
     ),
   ],
   ["uses latest pact-cli", /docker .* -e .*pactfoundation\/pact-cli:latest/],
@@ -38,13 +42,13 @@ const dockerCallParameters = [
   ],
   [
     "sets version",
-    new RegExp(`create-version-tag.* --version ${mandatoryVars.version}`),
+    new RegExp(`create-version-tag.* --version .*`),
   ],
   ["sets tag", new RegExp(`create-version-tag.* --tag ${mandatoryVars.tag}`)],
 ];
 
 // Runs the script we're testing, passing params etc....
-const spawnScript = (env = mandatoryVars) =>
+const spawnScript = (env = {...mandatoryVars, ...optionalVars}) =>
   spawnSync(dockerMock, [scriptTotest], { env, shell: true });
 
 describe("createTag", () => {

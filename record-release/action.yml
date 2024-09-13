@@ -1,7 +1,7 @@
-name: "create-version-tag"
-description: "Creates a tag on the specified version"
+name: "record-release"
+description: "Record release of an application to an environment"
 branding:
-  icon: "bookmark"
+  icon: "check"
   color: "green"
 inputs:
   broker_url:
@@ -16,19 +16,15 @@ inputs:
   application_name:
     description: "The name of your application (usually project name)"
     required: true
-  version:
-    description: "Version to tag"
-  tag:
-    description: "Tag to create"
+  environment:
+    description: "The name of the environment that the pacticipant version was released to"
     required: true
-  tag_with_git_branch:
-    description: "Tag pacticipant version with the name of the current git branch (Default: false)"
-  auto_create_version:
-    description: "Automatically create the pacticipant version if it does not exist"
+  version:
+    description: "The version of your application (defaults to version of the code where the action is run from)"  
 runs:
   using: "composite"
   steps:
-    - run: ${{ github.action_path }}/createTag.sh
+    - run: ${{ github.action_path }}/recordRelease.sh
       shell: bash
       env: 
         PACT_BROKER_BASE_URL: ${{ inputs.broker_url || env.PACT_BROKER_BASE_URL }} 
@@ -37,6 +33,5 @@ runs:
         PACT_BROKER_PASSWORD: ${{ inputs.password || env.PACT_BROKER_PASSWORD }} 
         application_name: ${{ inputs.application_name || env.application_name }}
         version: ${{ inputs.version || env.version }}
-        tag: ${{ inputs.tag || env.tag }}
-        tag_with_git_branch: ${{ inputs.tag_with_git_branch }}
-        auto_create_version: ${{ inputs.auto_create_version }}
+        environment: ${{ inputs.environment || env.environment }}
+        application_instance: ${{ inputs.application_instance || env.application_instance }}

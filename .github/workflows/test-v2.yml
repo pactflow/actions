@@ -1,0 +1,184 @@
+name: Actions test
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+env:
+  version: ${{ github.sha }}
+  environment: production
+  application_name: "actions-consumer"
+  provider_application_name: "actions-provider"
+  broker_url: https://testdemo.pactflow.io
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        node-version: [16.x]
+        action: [
+            can-i-deploy,
+            create-version-tag,
+            publish-pact-files,
+            # publish-provider-contract,
+            delete-branch,
+            record-deployment,
+            record-release,
+            create-or-update-version,
+          ]
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use Node.js 16.x for ${{ matrix.action }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: 16.x
+          cache: "npm"
+          cache-dependency-path: ${{ matrix.action }}/package-lock.json
+      - run: npm ci
+        working-directory: ${{ matrix.action }}
+      - run: npm run test:unit
+        name: test ${{ matrix.action }}
+        working-directory: ${{ matrix.action }}
+
+  pact-publish-oas-action:
+    # needs: test
+    runs-on: ubuntu-latest
+    steps:
+      # MANDATORY: Must use 'checkout' first
+      - uses: actions/checkout@v4
+      - name: Publish provider contract on passing test run
+        if: success()
+        uses: ./publish-provider-contract
+        with:
+          application_name: ${{ env.provider_application_name }}
+          contract: test/products.yml
+          verification_results: test/report.md
+          verification_exit_code: 0
+          broker_url: ${{ env.broker_url }}
+          token: ${{ secrets.PACTFLOW_TOKEN_FOR_CI_CD_WORKSHOP }}
+      - name: Publish provider contract on failing test run
+        # ensure we publish results even if the tests fail
+        if: failure()
+        uses: ./publish-provider-contract
+        with:
+          application_name: ${{ env.provider_application_name }}
+          contract: test/products.yml
+          verification_results: test/report.md
+          verification_exit_code: 1
+          broker_url: ${{ env.broker_url }}
+          token: ${{ secrets.PACTFLOW_TOKEN_FOR_CI_CD_WORKSHOP }}
+
+  pact-can-i-deploy-provider:
+    needs: pact-publish-oas-action
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./can-i-deploy
+        with:
+          to_environment: ${{ env.environment }}
+          application_name: ${{ env.provider_application_name }}
+          broker_url: ${{ env.broker_url }}
+          token: ${{ secrets.PACTFLOW_TOKEN_FOR_CI_CD_WORKSHOP }}
+
+  pact-record-deployment-provider:
+    needs: pact-can-i-deploy-provider
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./record-deployment
+        with:
+          environment: ${{ env.environment }}
+          application_name: ${{ env.provider_application_name }}
+          broker_url: ${{ env.broker_url }}
+          token: ${{ secrets.PACTFLOW_TOKEN_FOR_CI_CD_WORKSHOP }}
+
+  publish-pact-files:
+    needs: pact-record-deployment-provider
+    runs-on: ubuntu-latest
+    steps:
+      # MANDATORY: Must use 'checkout' first
+      - uses: actions/checkout@v4
+      - uses: ./publish-pact-files
+        with:
+          pactfiles: test/pact.json
+          broker_url: ${{ env.broker_url }}
+          token: ${{ secrets.PACTFLOW_TOKEN_FOR_CI_CD_WORKSHOP }}
+
+  pact-can-i-deploy-consumer:
+    needs: publish-pact-files
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./can-i-deploy
+        with:
+          application_name: ${{ env.application_name }}
+          to_environment: ${{ env.environment }}
+          broker_url: ${{ env.broker_url }}
+          token: ${{ secrets.PACTFLOW_TOKEN_FOR_CI_CD_WORKSHOP }}
+
+  pact-record-deployment-consumer:
+    needs: pact-can-i-deploy-consumer
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./record-deployment
+        with:
+          application_name: ${{ env.application_name }}
+          environment: ${{ env.environment }}
+          broker_url: ${{ env.broker_url }}
+          token: ${{ secrets.PACTFLOW_TOKEN_FOR_CI_CD_WORKSHOP }}
+
+  pact-record-release-consumer:
+    needs: pact-can-i-deploy-consumer
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./record-release
+        with:
+          application_name: ${{ env.application_name }}
+          environment: ${{ env.environment }}
+          broker_url: ${{ env.broker_url }}
+          token: ${{ secrets.PACTFLOW_TOKEN_FOR_CI_CD_WORKSHOP }}
+
+  pact-create-version-tag:
+    needs: pact-record-deployment-consumer
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./create-version-tag
+        with:
+          application_name: ${{ env.application_name }}
+          tag: ${{ env.environment }}
+          broker_url: ${{ env.broker_url }}
+          token: ${{ secrets.PACTFLOW_TOKEN_FOR_CI_CD_WORKSHOP }}
+
+
+  pact-create-or-update-version:
+    needs: pact-record-deployment-consumer
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ./create-or-update-version
+        with:
+          application_name: ${{ env.application_name }}
+          broker_url: ${{ env.broker_url }}
+          token: ${{ secrets.PACTFLOW_TOKEN_FOR_CI_CD_WORKSHOP }}
+  pact-delete-branch:
+    needs: pact-record-deployment-consumer
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ./delete-branch
+        if: github.event_name == 'push'
+        with:
+          application_name: ${{ env.application_name }}
+          broker_url: ${{ env.broker_url }}
+          token: ${{ secrets.PACTFLOW_TOKEN_FOR_CI_CD_WORKSHOP }}
+          branch: ${{ github.ref_name }}
+          error_when_not_found: "true"
+

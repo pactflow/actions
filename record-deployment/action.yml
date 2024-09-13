@@ -4,20 +4,36 @@ branding:
   icon: "check"
   color: "green"
 inputs:
-  PACT_BROKER_BASE_URL:
+  broker_url:
     description: "The url of your pact broker"
     required: true
-  PACT_BROKER_TOKEN:
-    description: "Your pact broker token"
-    required: true
+  token:
+    description: "Your pact broker token (required for PactFlow)"
+  username:
+    description: "Your pact broker username"
+  password:
+    description: "Your pact broker password"
   application_name:
     description: "The name of your application (usually project name)"
     required: true
-  version:
-    description: "The version of your application (defaults to latest)"
+  environment:
+    description: "The name of the environment that the pacticipant version was deployed to"
     required: true
+  version:
+    description: "The version of your application (defaults to version of the code where the action is run from)"  
+  application_instance:
+    description: "The application instance to which the deployment has occurred - a logical identifer required to differentiate deployments when there are multiple instances of the same application in an environment."
 runs:
   using: "composite"
   steps:
     - run: ${{ github.action_path }}/recordDeployment.sh
       shell: bash
+      env: 
+        PACT_BROKER_BASE_URL: ${{ inputs.broker_url || env.PACT_BROKER_BASE_URL }} 
+        PACT_BROKER_TOKEN: ${{ inputs.token || env.PACT_BROKER_TOKEN }} 
+        PACT_BROKER_USERNAME: ${{ inputs.username || env.PACT_BROKER_USERNAME }} 
+        PACT_BROKER_PASSWORD: ${{ inputs.password || env.PACT_BROKER_PASSWORD }} 
+        application_name: ${{ inputs.application_name || env.application_name }}
+        version: ${{ inputs.version || env.version }}
+        environment: ${{ inputs.environment || env.environment }}
+        application_instance: ${{ inputs.application_instance || env.application_instance }}

@@ -7,19 +7,16 @@ Check https://docs.pact.io/pact_broker/can_i_deploy for an overview of can-i-dep
 ## Example
 
 ```yml
-# (This just saves defining these multiple times for different pact jobs)
-env:
-  application_name: "my-consumer-app" # The pacticipant name of which to check if it safe to deploy
-  PACT_BROKER_BASE_URL: ${{ secrets.PACT_BROKER_BASE_URL }} # The base URL of the Pact Broker
-  PACT_BROKER_TOKEN: ${{ secrets.PACT_BROKER_TOKEN }} # Pactflow Broker API Read/Write token
-
 jobs:
   pact-can-i-deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: pactflow/actions/can-i-deploy@v1.2.0
-        env:
-          version: "1.0.1" # The pacticipant/application version.
+      - uses: pactflow/actions/can-i-deploy@v2
+        with:
+          application_name: "my-consumer-app" # The pacticipant name of which to check if it safe to deploy
+          broker_url: ${{ secrets.PACT_BROKER_BASE_URL }} # The base URL of the Pact Broker
+          token: ${{ secrets.PACT_BROKER_TOKEN }} # Pactflow Broker API Read/Write token
+          version: "1.0.1" # The pacticipant/application version. optional, defaults to git sha if not specified
           to_environment: "environment_name" # The environment into which the pacticipant(s) are to be deployed
           # to: "tag_name" # The tag that represents the branch or environment of the integrated applications for which you want to check the verification result status.
           # retry_while_unknown: 5 # Optional: number of times to retry while the verification status is unknown

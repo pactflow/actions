@@ -15,12 +15,6 @@ if [ ${#MISSING[@]} -gt 0 ]; then
   exit 1
 fi
 
-APPLICATION_INSTANCE_COMMAND=
-if [ "$application_instance" ]; then
-  echo "You set application_instance"
-  APPLICATION_INSTANCE_COMMAND="--application-instance $application_instance"
-fi
-
 if [ "$PACT_BROKER_TOKEN" ]; then
   echo "You set token"
   PACT_BROKER_TOKEN_ENV_VAR_CMD="-e PACT_BROKER_TOKEN=$PACT_BROKER_TOKEN"
@@ -49,8 +43,7 @@ docker run --rm \
   $PACT_BROKER_USERNAME_ENV_VAR_CMD \
   $PACT_BROKER_PASSWORD_ENV_VAR_CMD \
   pactfoundation/pact-cli:latest \
-  broker record-deployment \
+  broker record-release \
   --pacticipant "$application_name" \
   --version $version \
-  --environment $environment \
-  $APPLICATION_INSTANCE_COMMAND
+  --environment $environment

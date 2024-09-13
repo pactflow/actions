@@ -4,29 +4,66 @@ branding:
   icon: "upload"
   color: "green"
 inputs:
-  PACT_BROKER_BASE_URL:
+  broker_url:
     description: "The url of your pact broker"
     required: true
-  PACT_BROKER_TOKEN:
-    description: "Your pact broker token"
-    required: true
+  token:
+    description: "Your pact broker token (required for PactFlow)"
+  username:
+    description: "Your pact broker username"
+  password:
+    description: "Your pact broker password"
   application_name:
     description: "The name of your application (usually project name)"
     required: true
-  oas_file:
-    description: "Location of the OAS file"
+  contract:
+    description: "The contract specification Default: oas"
+  specification:
+    description: "Location of the contract file"
     required: true
-  oas_file_content_type:
-    description: "Content type of the OAS file (optional, default 'application/yaml')"
-    required: false
-  results_file:
+  contract_content_type:
+    description: "The content type. eg. application/yml or application/json. defaults to application/yml"
+  verification_exit_code:
+    description: "The exit code of the verification process, 0 success, anything else failure"
+  verification_results:
     description: "Location of the test evidence file"
     required: true
+  verification_results_content_type:
+    description: "The content type of the verification output eg. text/plain,application/yaml"
+  verification_results_format:
+    description: "The format of the verification output eg. junit, text"
+  verifier:
+    description: "The tool used to verify the provider contract"
+  verifier_version:
+    description: "The version of the tool used to verify the provider contract"  
+  build_url:
+    description: "The build URL that created the provider contract"
   version:
-    description: "Version to publish"
-    required: true
+    description: "The provider application version"
+  branch:
+    description: "Repository branch of the provider version"
+  tag:
+    description: "Tag name for provider version. Can be specified multiple times, with comma separated values"
 runs:
   using: "composite"
   steps:
     - run: ${{ github.action_path }}/publishOAS.sh
       shell: bash
+      env: 
+        PACT_BROKER_BASE_URL: ${{ inputs.broker_url || env.PACT_BROKER_BASE_URL }} 
+        PACT_BROKER_TOKEN: ${{ inputs.token || env.PACT_BROKER_TOKEN }} 
+        PACT_BROKER_USERNAME: ${{ inputs.username || env.PACT_BROKER_USERNAME }} 
+        PACT_BROKER_PASSWORD: ${{ inputs.password || env.PACT_BROKER_PASSWORD }} 
+        application_name: ${{ inputs.application_name || env.application_name }}
+        contract: ${{ inputs.contract || env.oas_file }}
+        contract_content_type: ${{ inputs.contract_content_type || env.oas_file_content_type }}
+        verification_exit_code: ${{ inputs.verification_exit_code || env.EXIT_CODE }}
+        verification_results: ${{ inputs.verification_results || env.results_file }}
+        verification_results_content_type: ${{ inputs.verification_results_content_type || env.REPORT_FILE_CONTENT_TYPE }}
+        verification_results_format: ${{ inputs.verification_results_format }}
+        verifier_version: ${{ inputs.verifier_version }}
+        verifier: ${{ inputs.verifier || env.VERIFIER_TOOL }}
+        build_url: ${{ inputs.build_url }}
+        version: ${{ inputs.version || env.version }}
+        branch: ${{ inputs.branch || env.branch }}
+        tag: ${{ inputs.tag }}
