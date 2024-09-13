@@ -4,24 +4,32 @@ branding:
   icon: "check"
   color: "green"
 inputs:
-  PACT_BROKER_BASE_URL:
+  broker_url:
     description: "The url of your pact broker"
     required: true
-  PACT_BROKER_TOKEN:
-    description: "Your pact broker token"
-    required: true
+  token:
+    description: "Your pact broker token (required for PactFlow)"
+  username:
+    description: "Your pact broker username"
+  password:
+    description: "Your pact broker password"
   application_name:
     description: "The name of your application (usually project name)"
     required: true
   version:
-    description: "The version of your application (defaults to latest)"
-    required: false
+    description: "The version of your application (defaults to version of the code where the action is run from)"
   latest:
     description: "The latest tag value of your application (i.e. 'test' or 'stage')"
-    required: false
+  to_environment:
+    description: "The environment you wish to deploy to (test / stage / prod etc...)"
   to:
     description: "The tag you wish to deploy to (test / stage / prod etc...)"
-    required: true
+  dry_run:
+    description: "When dry-run is enabled, always exit process with a success code."
+  branch:
+    description: "The branch of the version for which you want to check the verification results."
+  main_branch:
+    description: "Use the latest version of the configured main branch of the pacticipant as the version for which you want to check the verification results. Default: false"
   retry_while_unknown:
     description: |
       Optional (default 0): the number of times to retry while there is an unknown
@@ -37,3 +45,18 @@ runs:
   steps:
     - run: ${{ github.action_path }}/canideployTo.sh
       shell: bash
+      env: 
+        PACT_BROKER_BASE_URL: ${{ inputs.broker_url || env.PACT_BROKER_BASE_URL }} 
+        PACT_BROKER_TOKEN: ${{ inputs.token || env.PACT_BROKER_TOKEN }} 
+        PACT_BROKER_USERNAME: ${{ inputs.username || env.PACT_BROKER_USERNAME }} 
+        PACT_BROKER_PASSWORD: ${{ inputs.password || env.PACT_BROKER_PASSWORD }} 
+        application_name: ${{ inputs.application_name || env.application_name }}
+        version: ${{ inputs.version || env.version }}
+        to_environment: ${{ inputs.to_environment || env.to_environment }}
+        to: ${{ inputs.to || env.to }}
+        latest: ${{ inputs.latest }}
+        retry_while_unknown: ${{ inputs.retry_while_unknown || env.retry_while_unknown }}
+        retry_interval: ${{ inputs.retry_interval || env.retry_interval }}
+        dry_run: ${{ inputs.dry_run }}
+        branch: ${{ inputs.branch }}
+        main_branch: ${{ inputs.main_branch }}

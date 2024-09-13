@@ -7,9 +7,11 @@ const scriptTotest = "./publishPactfiles.sh";
 
 const mandatoryVars = {
   PACT_BROKER_BASE_URL: "PACT_BROKER_BASE_URL-set",
-  PACT_BROKER_TOKEN: "PACT_BROKER_TOKEN-set",
-  version: "version-set",
   pactfiles: "pactfiles-set",
+};
+
+const optionalVars = {
+  PACT_BROKER_TOKEN: "PACT_BROKER_TOKEN-set",
 };
 
 // Examines the generated docker call to check each element is in place when called with `mandatoryVars`.
@@ -26,20 +28,20 @@ const dockerCallParameters = [
   [
     "sets PACT_BROKER_TOKEN",
     new RegExp(
-      `docker .* -e PACT_BROKER_TOKEN=${mandatoryVars.PACT_BROKER_TOKEN}`
+      `docker .* -e PACT_BROKER_TOKEN=${optionalVars.PACT_BROKER_TOKEN}`
     ),
   ],
   ["uses latest pact-cli", /docker .* -e .*pactfoundation\/pact-cli:latest/],
   ["uses publish", /pact-cli.* publish /],
-  [
-    "sets version",
-    new RegExp(`publish.* --consumer-app-version ${mandatoryVars.version}`),
-  ],
+  // [
+  //   "sets version",
+  //   new RegExp(`publish.* --consumer-app-version ${mandatoryVars.version}`),
+  // ],
   ["sets pactfiles", new RegExp(`publish.* ${mandatoryVars.pactfiles}`)],
 ];
 
 // Runs the script we're testing, passing params etc....
-const spawnScript = (env = mandatoryVars) =>
+const spawnScript = (env = {...mandatoryVars, ...optionalVars}) =>
   spawnSync(dockerMock, [scriptTotest], { env, shell: true });
 
 describe("canideployTo", () => {

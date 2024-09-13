@@ -3,7 +3,6 @@
 
 MISSING=()
 [ ! "$PACT_BROKER_BASE_URL" ] && MISSING+=("PACT_BROKER_BASE_URL")
-[ ! "$PACT_BROKER_TOKEN" ] && MISSING+=("PACT_BROKER_TOKEN")
 [ ! "$application_name" ] && MISSING+=("application_name")
 [ ! "$branch" ] && MISSING+=("branch")
 
@@ -25,9 +24,24 @@ if [ -n "${error_when_not_found}" ]; then
   fi
 fi
 
+if [ "$PACT_BROKER_TOKEN" ]; then
+  echo "You set token"
+  PACT_BROKER_TOKEN_ENV_VAR_CMD="-e PACT_BROKER_TOKEN=$PACT_BROKER_TOKEN"
+fi
+
+if [ "$PACT_BROKER_USERNAME" ]; then
+  echo "You set username"
+  PACT_BROKER_USERNAME_ENV_VAR_CMD="-e PACT_BROKER_USERNAME=$PACT_BROKER_USERNAME"
+fi
+
+if [ "$PACT_BROKER_PASSWORD" ]; then
+  echo "You set password"
+  PACT_BROKER_PASSWORD_ENV_VAR_CMD="-e PACT_BROKER_PASSWORD=$PACT_BROKER_PASSWORD"
+fi
+
+
 echo "
   PACT_BROKER_BASE_URL: '$PACT_BROKER_BASE_URL'
-  PACT_BROKER_TOKEN: '$PACT_BROKER_TOKEN'
   application_name: '$application_name'
   branch: '$branch'
   error_when_not_found: $error_when_not_found
@@ -36,9 +50,11 @@ echo "
 
 docker run --rm \
   -e PACT_BROKER_BASE_URL=$PACT_BROKER_BASE_URL \
-  -e PACT_BROKER_TOKEN=$PACT_BROKER_TOKEN \
+  $PACT_BROKER_TOKEN_ENV_VAR_CMD \
+  $PACT_BROKER_USERNAME_ENV_VAR_CMD \
+  $PACT_BROKER_PASSWORD_ENV_VAR_CMD \
   pactfoundation/pact-cli:latest \
   broker delete-branch \
   --pacticipant "$application_name" \
   --branch "$branch" \
-  $OPTIONS \
+  $OPTIONS

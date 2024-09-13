@@ -1,2 +1,0 @@
-# Test fixture file
-Passed: true

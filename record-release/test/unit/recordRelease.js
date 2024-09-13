@@ -3,16 +3,18 @@ const assert = require("assert");
 const { spawnSync } = require("child_process");
 
 const dockerMock = "./test/unit/docker-mock.sh";
-const scriptTotest = "./deleteBranch.sh";
+const scriptTotest = "./recordRelease.sh";
 
 const mandatoryVars = {
   PACT_BROKER_BASE_URL: "PACT_BROKER_BASE_URL-set",
   application_name: "application_name-set",
-  branch: "branch-set",
+  environment: "environment-set",
 };
 
+
 const optionalVars = {
-  PACT_BROKER_TOKEN: "PACT_BROKER_TOKEN-set"
+  PACT_BROKER_TOKEN: "PACT_BROKER_TOKEN-set",
+  version: "version-set",
 };
 
 // Examines the generated docker call to check each element is in place when called with `mandatoryVars`.
@@ -31,23 +33,30 @@ const dockerCallParameters = [
     ),
   ],
   ["uses latest pact-cli", /docker .* -e .*pactfoundation\/pact-cli:latest/],
-  ["uses delete-branch", /pact-cli.*broker delete-branch/],
+  ["uses record-release", /pact-cli.*broker record-release/],
   [
-    "sets the pacticipant",
-    new RegExp(`delete-branch.*--pacticipant ${mandatoryVars.application_name}`),
+    "sets the participant",
+    new RegExp(
+      `record-release.*--pacticipant ${mandatoryVars.application_name}`
+    ),
   ],
   [
-    "sets the branch",
-    new RegExp(`delete-branch.*--branch ${mandatoryVars.branch}`),
+    "sets environment",
+    new RegExp(
+      `record-release.* --environment ${mandatoryVars.environment}`
+    ),
   ],
-
+  [
+    "sets version",
+    new RegExp(`record-release.* --version ${optionalVars.version}`),
+  ],
 ];
 
 // Runs the script we're testing, passing params etc....
 const spawnScript = (env = {...mandatoryVars, ...optionalVars}) =>
   spawnSync(dockerMock, [scriptTotest], { env, shell: true });
 
-describe("deleteBranch", () => {
+describe("recordRelease", () => {
   describe("docker command", () =>
     dockerCallParameters.forEach(([description, matcher]) =>
       it(description, () => {
@@ -68,4 +77,10 @@ describe("deleteBranch", () => {
         assert.strictEqual(result.status, 1);
       });
     }));
+
+  it("does not fail if all variables are set", () => {
+    const result = spawnScript();
+
+    assert.strictEqual(result.status, 0);
+  });
 });

@@ -1,26 +1,42 @@
 name: "publish-pact-files"
-description: "Publishes a Pact file to Pactflow (requires checkout action first)"
+description: "Publishes a Pact file to a Pact Broker (requires checkout action first)"
 branding:
   icon: "upload"
   color: "green"
 inputs:
-  PACT_BROKER_BASE_URL:
+  broker_url:
     description: "The url of your pact broker"
-    required: true
-  PACT_BROKER_TOKEN:
-    description: "Your pact broker token"
     required: true
   pactfiles:
     description: "Location of the Pact files"
     required: true
+  token:
+    description: "Your pact broker token (required for PactFlow)"
+  username:
+    description: "Your pact broker username"
+  password:
+    description: "Your pact broker password"
   version:
     description: "Version to publish"
-    required: true
+  branch:
+    description: "branch to associate version of pact with"  
   tag:
-    description: "Optional tag"
-    required: false
+    description: "tag to associate version of pact with"
+  tag_with_git_branch:
+    description: "tag pact with git branch"
 runs:
   using: "composite"
   steps:
     - run: ${{ github.action_path }}/publishPactfiles.sh
       shell: bash
+      env: 
+        PACT_BROKER_BASE_URL: ${{ inputs.broker_url || env.PACT_BROKER_BASE_URL }} 
+        PACT_BROKER_TOKEN: ${{ inputs.token || env.PACT_BROKER_TOKEN }} 
+        PACT_BROKER_USERNAME: ${{ inputs.username || env.PACT_BROKER_USERNAME }} 
+        PACT_BROKER_PASSWORD: ${{ inputs.password || env.PACT_BROKER_PASSWORD }} 
+        pactfiles: ${{ inputs.pactfiles || env.pactfiles }}
+        version: ${{ inputs.version || env.version }}
+        tag: ${{ inputs.tag || env.tag }}
+        branch: ${{ inputs.branch || env.branch }}
+        tag_with_git_branch: ${{ inputs.tag_with_git_branch }}
+

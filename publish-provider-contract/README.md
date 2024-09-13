@@ -12,35 +12,36 @@ Publishes OAS and test evidence to a Pactflow server for 'bi-directional' testin
 ## Example
 
 ```yaml
-# (This just saves defining these multiple times for different pact jobs)
-env:
-  version: "1.2.3"
-  application_name: "my-api-provider"
-  PACT_BROKER_BASE_URL: ${{ secrets.PACT_BROKER_BASE_URL }}
-  PACT_BROKER_TOKEN: ${{ secrets.PACT_BROKER_TOKEN }}
-
 jobs:
   pact-publish-oas-action:
     runs-on: ubuntu-latest
     steps:
       # MANDATORY: Must use 'checkout' first
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - name: Publish provider contract on passing test run
         if: success()
-        uses: pactflow/actions/publish-provider-contract@v1.2.0
-        env:
-          oas_file: src/oas/user.yml
-          oas_file_content_type: application/yml # optional, defaults to application/yaml
-          results_file: src/results/report.md
+        uses: pactflow/actions/publish-provider-contract@v2
+        with:
+          version: "1.2.3"
+          application_name: "my-api-provider"
+          broker_url: ${{ secrets.PACT_BROKER_BASE_URL }}
+          token: ${{ secrets.PACT_BROKER_TOKEN }}
+          contract: src/oas/user.yml
+          contract_content_type: application/yaml # optional, defaults to application/yml
+          verification_results: src/results/report.md
       - name: Publish provider contract on failing test run
         # ensure we publish results even if the tests fail
         if: failure()
-        uses: pactflow/actions/publish-provider-contract@v1.2.0
-        env:
-          oas_file: src/oas/user.yml
-          results_file: src/results/report.md
-          # ensure we set the EXIT_CODE to ensure we upload a failing self-verification result
-          EXIT_CODE: 1
+        uses: pactflow/actions/publish-provider-contract@v2
+        with:
+          version: "1.2.3"
+          application_name: "my-api-provider"
+          broker_url: ${{ secrets.PACT_BROKER_BASE_URL }}
+          token: ${{ secrets.PACT_BROKER_TOKEN }}
+          contract: src/oas/user.yml
+          verification_results: src/results/report.md
+          # ensure we set the verification_exit_code to ensure we upload a failing self-verification result
+          verification_exit_code: 1 # defaults to 0 (success)
 ```
 
 ## Notes

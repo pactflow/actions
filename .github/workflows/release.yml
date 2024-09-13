@@ -15,16 +15,16 @@ jobs:
             can-i-deploy,
             create-version-tag,
             publish-pact-files,
-            # publish-provider-contract,
-            publish-provider-contract-legacy,
+            publish-provider-contract,
             record-deployment,
+            record-release,
             create-or-update-version,
           ]
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Use Node.js 16.x for ${{ matrix.action }}
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: 16.x
           cache: "npm"

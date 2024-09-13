@@ -5,13 +5,14 @@ if [ "$version" != "" ] && [ "$latest" != "" ]; then
   exit 1
 fi
 
-VERSION="--latest"
+if [ "$version" == "" ]; then
+  version=$(git rev-parse HEAD)
+fi
 [ "$version" != "" ] && VERSION="--version $version"
 [ "$latest" != "" ] && VERSION="--latest $latest"
 
 MISSING=()
 [ ! "$PACT_BROKER_BASE_URL" ] && MISSING+=("PACT_BROKER_BASE_URL")
-[ ! "$PACT_BROKER_TOKEN" ] && MISSING+=("PACT_BROKER_TOKEN")
 [ ! "$application_name" ] && MISSING+=("application_name")
 
 if [ ${#MISSING[@]} -gt 0 ]; then
@@ -52,9 +53,43 @@ if [ "$retry_while_unknown" ]; then
   fi
 fi
 
+DRY_RUN_COMMAND=
+if [ "$dry_run" == "true" ] || [ "$PACT_BROKER_CAN_I_DEPLOY_DRY_RUN" == "true" ]; then
+  echo "You set dry run"
+  DRY_RUN_COMMAND="--dry-run"
+fi
+
+MAIN_BRANCH_COMMAND=
+if [ "$main_branch" == "true" ]; then
+  echo "You set main-branch"
+  MAIN_BRANCH_COMMAND="--main-branch"
+fi
+
+BRANCH_COMMAND=
+if [ "$branch" ]; then
+  echo "You set branch"
+  BRANCH_COMMAND="--branch $branch"
+fi
+
+IGNORE_COMMAND=
+if [ "$PACT_BROKER_TOKEN" ]; then
+  echo "You set token"
+  PACT_BROKER_TOKEN_ENV_VAR_CMD="-e PACT_BROKER_TOKEN=$PACT_BROKER_TOKEN"
+fi
+
+if [ "$PACT_BROKER_USERNAME" ]; then
+  echo "You set username"
+  PACT_BROKER_USERNAME_ENV_VAR_CMD="-e PACT_BROKER_USERNAME=$PACT_BROKER_USERNAME"
+fi
+
+if [ "$PACT_BROKER_PASSWORD" ]; then
+  echo "You set password"
+  PACT_BROKER_PASSWORD_ENV_VAR_CMD="-e PACT_BROKER_PASSWORD=$PACT_BROKER_PASSWORD"
+fi
+
+
 echo "
   PACT_BROKER_BASE_URL: '$PACT_BROKER_BASE_URL'
-  PACT_BROKER_TOKEN: '$PACT_BROKER_TOKEN'
   application_name: '$application_name'
   VERSION: '$VERSION'
   to: '$to'
@@ -63,10 +98,15 @@ echo "
 
 docker run --rm \
   -e PACT_BROKER_BASE_URL=$PACT_BROKER_BASE_URL \
-  -e PACT_BROKER_TOKEN=$PACT_BROKER_TOKEN \
+  $PACT_BROKER_TOKEN_ENV_VAR_CMD \
+  $PACT_BROKER_USERNAME_ENV_VAR_CMD \
+  $PACT_BROKER_PASSWORD_ENV_VAR_CMD \
   pactfoundation/pact-cli:latest \
   broker can-i-deploy \
   --pacticipant "$application_name" \
   $VERSION \
   $COMMAND \
+  $DRY_RUN_COMMAND \
+  $MAIN_BRANCH_COMMAND \
+  $BRANCH_COMMAND \
   ${OPTIONS[*]}

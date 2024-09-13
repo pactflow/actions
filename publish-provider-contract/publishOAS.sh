@@ -2,11 +2,13 @@
 
 MISSING=()
 [ ! "$PACT_BROKER_BASE_URL" ] && MISSING+=("PACT_BROKER_BASE_URL")
-[ ! "$PACT_BROKER_TOKEN" ] && MISSING+=("PACT_BROKER_TOKEN")
 [ ! "$application_name" ] && MISSING+=("application_name")
-[ ! "$version" ] && MISSING+=("version")
-[ ! "$oas_file" ] && MISSING+=("oas_file")
-[ ! "$results_file" ] && MISSING+=("results_file")
+[ ! "$contract" ] && MISSING+=("contract")
+[ ! "$verification_results" ] && MISSING+=("verification_results")
+
+if [ "$version" == "" ]; then
+  version=$(git rev-parse HEAD)
+fi
 
 if [ ${#MISSING[@]} -gt 0 ]; then
   echo "ERROR: The following environment variables are not set:"
@@ -14,18 +16,39 @@ if [ ${#MISSING[@]} -gt 0 ]; then
   exit 1
 fi
 
-EXIT_CODE=${EXIT_CODE:-0}
-REPORT_FILE_CONTENT_TYPE=${REPORT_FILE_CONTENT_TYPE:-'text/plain'}
-VERIFIER_TOOL=${VERIFIER_TOOL:-'github-actions'}
-BRANCH=${GITHUB_REF#refs/heads/}
-BUILD_URL="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
-oas_file_content_type=${oas_file_content_type:-'application/yaml'}
+CONTRACT_FILE_CONTENT_TYPE=${contract_content_type:-"application/yml"}
+VERIFICATION_RESULTS_CONTENT_TYPE=${verification_results_content_type:-"text/plain"}
+SPECIFICATION=${specification:-"oas"}
+verification_exit_code=${verification_exit_code:-0}
+
+verifier=${verifier:-'github-actions'}
+VERIFICATION_RESULTS_FORMAT=${verification_results_format:-'text'}
+
+branch=$(git rev-parse --abbrev-ref HEAD)
+
+TAG_COMMAND=
+if [ "$tag" ]; then
+  echo "You set tag"
+  TAG_COMMAND="--tag $tag"
+fi
+
+BUILD_URL_COMMAND=
+if [ "$build_url" ]; then
+  echo "You set build_url"
+  BUILD_URL_COMMAND="--build-url $build_url"
+fi
+
+VERIFIER_VERSION_COMMAND=
+if [ "$verifier_version" ]; then
+  echo "You set verifier_version"
+  VERIFIER_VERSION_COMMAND="--verifier-version $verifier_version"
+fi
+
 
 echo """
 URL: $URL
 PACT_BROKER_TOKEN : $PACT_BROKER_TOKEN
-oas_file: $oas_file
-oas_file_content_type: $oas_file_content_type
+contract: $contract
 results_file: $results_file
 EXIT_CODE: $EXIT_CODE
 BRANCH: $BRANCH
@@ -39,13 +62,17 @@ docker run --rm \
   -e PACT_BROKER_TOKEN=$PACT_BROKER_TOKEN \
   pactfoundation/pact-cli:latest \
   pactflow publish-provider-contract \
-  $oas_file \
+  $contract \
   --provider $application_name \
   --provider-app-version $version \
   --branch $BRANCH \
-  --content-type $oas_file_content_type \
-  --verification-exit-code=$EXIT_CODE \
-  --verification-results $results_file \
-  --verification-results-content-type $REPORT_FILE_CONTENT_TYPE \
+  --specification $SPECIFICATION \
+  --content-type $CONTRACT_FILE_CONTENT_TYPE \
+  --verification-exit-code=$verification_exit_code \
+  --verification-results $verification_results \
+  --verification-results-content-type $VERIFICATION_RESULTS_CONTENT_TYPE \
+  --verification-results-format $VERIFICATION_RESULTS_FORMAT \
   --verifier $VERIFIER_TOOL \
-  --build-url $BUILD_URL
+  $TAG_COMMAND \
+  $BUILD_URL_COMMAND \
+  $VERIFIER_VERSION_COMMAND

@@ -1,4 +1,4 @@
-name: Actions test
+name: Actions test v1 via env
 
 on:
   push:
@@ -6,44 +6,13 @@ on:
   workflow_dispatch:
 
 env:
-  version: ${{ github.sha }}
+  version: ${{ github.sha }}-v1
   environment: production
   application_name: "actions-consumer"
   PACT_BROKER_BASE_URL: https://testdemo.pactflow.io
   PACT_BROKER_TOKEN: ${{ secrets.PACTFLOW_TOKEN_FOR_CI_CD_WORKSHOP }}
 
 jobs:
-  test:
-    runs-on: ubuntu-latest
-
-    strategy:
-      fail-fast: false
-      matrix:
-        node-version: [16.x]
-        action: [
-            can-i-deploy,
-            create-version-tag,
-            publish-pact-files,
-            # publish-provider-contract,
-            publish-provider-contract-legacy,
-            record-deployment,
-            create-or-update-version,
-          ]
-
-    steps:
-      - uses: actions/checkout@v3
-      - name: Use Node.js 16.x for ${{ matrix.action }}
-        uses: actions/setup-node@v3
-        with:
-          node-version: 16.x
-          cache: "npm"
-          cache-dependency-path: ${{ matrix.action }}/package-lock.json
-      - run: npm ci
-        working-directory: ${{ matrix.action }}
-      - run: npm run test:unit
-        name: test ${{ matrix.action }}
-        working-directory: ${{ matrix.action }}
-
   pact-publish-oas-action:
     # needs: test
     runs-on: ubuntu-latest

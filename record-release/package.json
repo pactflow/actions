@@ -1,7 +1,7 @@
 {
-  "name": "publish-oas",
+  "name": "record-release",
   "version": "1.0.0",
-  "description": "Publishes an OAS and test results to Pactflow (requires checkout action first).",
+  "description": "Record release of an application to an environment",
   "main": "index.js",
   "directories": {
     "test": "test"
