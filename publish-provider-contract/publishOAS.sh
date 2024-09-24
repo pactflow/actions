@@ -24,7 +24,9 @@ verification_exit_code=${verification_exit_code:-0}
 verifier=${verifier:-'github-actions'}
 VERIFICATION_RESULTS_FORMAT=${verification_results_format:-'text'}
 
-branch=$(git rev-parse --abbrev-ref HEAD)
+if [ "$branch" = "" ]; then
+  branch=$(git rev-parse --abbrev-ref HEAD)
+fi
 
 TAG_COMMAND=
 if [ "$tag" ]; then
@@ -46,13 +48,12 @@ fi
 
 
 echo """
-URL: $URL
-PACT_BROKER_TOKEN : $PACT_BROKER_TOKEN
+PACT_BROKER_BASE_URL: $PACT_BROKER_BASE_URL
 contract: $contract
-results_file: $results_file
-EXIT_CODE: $EXIT_CODE
-BRANCH: $BRANCH
-BUILD_URL: $BUILD_URL
+verification_results: $verification_results
+verification_exit_code: $verification_exit_code
+branch: $branch
+build_url: $build_url
 """
 
 docker run --rm \
@@ -65,7 +66,7 @@ docker run --rm \
   $contract \
   --provider $application_name \
   --provider-app-version $version \
-  --branch $BRANCH \
+  --branch $branch \
   --specification $SPECIFICATION \
   --content-type $CONTRACT_FILE_CONTENT_TYPE \
   --verification-exit-code=$verification_exit_code \
