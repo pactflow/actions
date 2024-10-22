@@ -17,10 +17,10 @@ inputs:
     description: "The name of your application (usually project name)"
     required: true
   contract:
-    description: "The contract specification Default: oas"
-  specification:
     description: "Location of the contract file"
     required: true
+  specification:
+      description: "The contract specification Default: oas"
   contract_content_type:
     description: "The content type. eg. application/yml or application/json. defaults to application/yml"
   verification_exit_code:
