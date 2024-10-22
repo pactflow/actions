@@ -56,6 +56,7 @@ runs:
         PACT_BROKER_PASSWORD: ${{ inputs.password || env.PACT_BROKER_PASSWORD }} 
         application_name: ${{ inputs.application_name || env.application_name }}
         contract: ${{ inputs.contract || env.oas_file }}
+        specification: ${{ inputs.specification }}
         contract_content_type: ${{ inputs.contract_content_type || env.oas_file_content_type }}
         verification_exit_code: ${{ inputs.verification_exit_code || env.EXIT_CODE }}
         verification_results: ${{ inputs.verification_results || env.results_file }}
