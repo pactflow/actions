@@ -27,7 +27,7 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - run: ${{ github.action_path }}/publishPactfiles.sh
+    - run: ${GITHUB_ACTION_PATH}/publishPactfiles.sh
       shell: bash
       env: 
         PACT_BROKER_BASE_URL: ${{ inputs.broker_url || env.PACT_BROKER_BASE_URL }} 
