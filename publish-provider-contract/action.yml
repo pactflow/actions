@@ -47,7 +47,7 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - run: ${{ github.action_path }}/publishOAS.sh
+    - run: ${GITHUB_ACTION_PATH}/publishOAS.sh
       shell: bash
       env: 
         PACT_BROKER_BASE_URL: ${{ inputs.broker_url || env.PACT_BROKER_BASE_URL }} 
