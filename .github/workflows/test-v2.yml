@@ -33,10 +33,10 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-      - name: Use Node.js 16.x for ${{ matrix.action }}
+      - name: Use Node.js 18.x for ${{ matrix.action }}
         uses: actions/setup-node@v4
         with:
-          node-version: 16.x
+          node-version: 18.x
           cache: "npm"
           cache-dependency-path: ${{ matrix.action }}/package-lock.json
       - run: npm ci
@@ -162,7 +162,7 @@ jobs:
     needs: pact-record-deployment-consumer
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - uses: ./create-or-update-version
         with:
           application_name: ${{ env.application_name }}
@@ -172,7 +172,7 @@ jobs:
     needs: pact-record-deployment-consumer
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - uses: ./delete-branch
         if: github.event_name == 'push'
         with:
