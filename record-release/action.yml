@@ -20,18 +20,18 @@ inputs:
     description: "The name of the environment that the pacticipant version was released to"
     required: true
   version:
-    description: "The version of your application (defaults to version of the code where the action is run from)"  
+    description: "The version of your application (defaults to version of the code where the action is run from)"
 runs:
   using: "composite"
   steps:
     - run: ${GITHUB_ACTION_PATH}/recordRelease.sh
       shell: bash
-      env: 
-        PACT_BROKER_BASE_URL: ${{ inputs.broker_url || env.PACT_BROKER_BASE_URL }} 
-        PACT_BROKER_TOKEN: ${{ inputs.token || env.PACT_BROKER_TOKEN }} 
-        PACT_BROKER_USERNAME: ${{ inputs.username || env.PACT_BROKER_USERNAME }} 
-        PACT_BROKER_PASSWORD: ${{ inputs.password || env.PACT_BROKER_PASSWORD }} 
+      env:
+        PACT_BROKER_BASE_URL: ${{ inputs.broker_url || env.PACT_BROKER_BASE_URL }}
+        PACT_BROKER_TOKEN: ${{ inputs.token || env.PACT_BROKER_TOKEN }}
+        PACT_BROKER_USERNAME: ${{ inputs.username || env.PACT_BROKER_USERNAME }}
+        PACT_BROKER_PASSWORD: ${{ inputs.password || env.PACT_BROKER_PASSWORD }}
         application_name: ${{ inputs.application_name || env.application_name }}
-        version: ${{ inputs.version || env.version }}
+        version: ${{ inputs.version || env.version || github.sha }}
         environment: ${{ inputs.environment || env.environment }}
         application_instance: ${{ inputs.application_instance || env.application_instance }}

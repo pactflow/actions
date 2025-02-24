@@ -20,7 +20,7 @@ inputs:
     description: "Location of the contract file"
     required: true
   specification:
-      description: "The contract specification Default: oas"
+    description: "The contract specification Default: oas"
   contract_content_type:
     description: "The content type. eg. application/yml or application/json. defaults to application/yml"
   verification_exit_code:
@@ -35,7 +35,7 @@ inputs:
   verifier:
     description: "The tool used to verify the provider contract"
   verifier_version:
-    description: "The version of the tool used to verify the provider contract"  
+    description: "The version of the tool used to verify the provider contract"
   build_url:
     description: "The build URL that created the provider contract"
   version:
@@ -49,11 +49,11 @@ runs:
   steps:
     - run: ${GITHUB_ACTION_PATH}/publishOAS.sh
       shell: bash
-      env: 
-        PACT_BROKER_BASE_URL: ${{ inputs.broker_url || env.PACT_BROKER_BASE_URL }} 
-        PACT_BROKER_TOKEN: ${{ inputs.token || env.PACT_BROKER_TOKEN }} 
-        PACT_BROKER_USERNAME: ${{ inputs.username || env.PACT_BROKER_USERNAME }} 
-        PACT_BROKER_PASSWORD: ${{ inputs.password || env.PACT_BROKER_PASSWORD }} 
+      env:
+        PACT_BROKER_BASE_URL: ${{ inputs.broker_url || env.PACT_BROKER_BASE_URL }}
+        PACT_BROKER_TOKEN: ${{ inputs.token || env.PACT_BROKER_TOKEN }}
+        PACT_BROKER_USERNAME: ${{ inputs.username || env.PACT_BROKER_USERNAME }}
+        PACT_BROKER_PASSWORD: ${{ inputs.password || env.PACT_BROKER_PASSWORD }}
         application_name: ${{ inputs.application_name || env.application_name }}
         contract: ${{ inputs.contract || env.oas_file }}
         specification: ${{ inputs.specification }}
@@ -65,6 +65,6 @@ runs:
         verifier_version: ${{ inputs.verifier_version }}
         verifier: ${{ inputs.verifier || env.VERIFIER_TOOL }}
         build_url: ${{ inputs.build_url }}
-        version: ${{ inputs.version || env.version }}
+        version: ${{ inputs.version || env.version || github.sha }}
         branch: ${{ inputs.branch || env.branch }}
         tag: ${{ inputs.tag }}

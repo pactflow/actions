@@ -19,7 +19,7 @@ inputs:
   version:
     description: "Version to publish"
   branch:
-    description: "branch to associate version of pact with"  
+    description: "branch to associate version of pact with"
   tag:
     description: "tag to associate version of pact with"
   tag_with_git_branch:
@@ -29,14 +29,13 @@ runs:
   steps:
     - run: ${GITHUB_ACTION_PATH}/publishPactfiles.sh
       shell: bash
-      env: 
-        PACT_BROKER_BASE_URL: ${{ inputs.broker_url || env.PACT_BROKER_BASE_URL }} 
-        PACT_BROKER_TOKEN: ${{ inputs.token || env.PACT_BROKER_TOKEN }} 
-        PACT_BROKER_USERNAME: ${{ inputs.username || env.PACT_BROKER_USERNAME }} 
-        PACT_BROKER_PASSWORD: ${{ inputs.password || env.PACT_BROKER_PASSWORD }} 
+      env:
+        PACT_BROKER_BASE_URL: ${{ inputs.broker_url || env.PACT_BROKER_BASE_URL }}
+        PACT_BROKER_TOKEN: ${{ inputs.token || env.PACT_BROKER_TOKEN }}
+        PACT_BROKER_USERNAME: ${{ inputs.username || env.PACT_BROKER_USERNAME }}
+        PACT_BROKER_PASSWORD: ${{ inputs.password || env.PACT_BROKER_PASSWORD }}
         pactfiles: ${{ inputs.pactfiles || env.pactfiles }}
-        version: ${{ inputs.version || env.version }}
+        version: ${{ inputs.version || env.version || github.sha }}
         tag: ${{ inputs.tag || env.tag }}
         branch: ${{ inputs.branch || env.branch }}
         tag_with_git_branch: ${{ inputs.tag_with_git_branch }}
-
