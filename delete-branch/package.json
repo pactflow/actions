@@ -7,14 +7,14 @@
     "test": "test"
   },
   "scripts": {
-    "test:unit": "./node_modules/mocha/bin/mocha --recursive test/unit",
-    "test:unit:watch": "./node_modules/mocha/bin/mocha -w --recursive test/unit",
+    "test:unit": "./node_modules/mocha/bin/_mocha --recursive test/unit",
+    "test:unit:watch": "./node_modules/mocha/bin/_mocha -w --recursive test/unit",
     "lint": "standard ."
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "mocha": "^11.0.1",
-    "standard": "^16.0.4"
+    "standard": "^17.0.0"
   }
 }
