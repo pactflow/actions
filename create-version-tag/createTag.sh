@@ -14,6 +14,14 @@ if [ ${#MISSING[@]} -gt 0 ]; then
   exit 1
 fi
 
+PACT_CLI_IMAGE=
+if [ "$pact_cli_image" ]; then
+    echo "You set pact cli image"
+    PACT_CLI_IMAGE="$pact_cli_image"
+else
+    PACT_CLI_IMAGE="pactfoundation/pact-cli:latest"
+fi
+
 AUTO_CREATE_VERSION_COMMAND=
 if [ "$auto_create_version" ]; then
   echo "You set auto_create_version"
@@ -30,6 +38,7 @@ fi
 
 echo """
 PACT_BROKER_BASE_URL: $PACT_BROKER_BASE_URL
+pact_cli_image: $pact_cli_image
 application_name: $application_name
 version: $version
 tag: $tag
@@ -60,7 +69,7 @@ docker run --rm \
   -e GITHUB_BASE_REF=$GITHUB_BASE_REF \
   -e GITHUB_REF=$GITHUB_REF \
   -e GITHUB_SHA=$GITHUB_SHA \
-  pactfoundation/pact-cli:latest \
+  $PACT_CLI_IMAGE \
   broker create-version-tag \
   --pacticipant "$application_name" \
   --version "$version" \

@@ -16,6 +16,14 @@ if [ ${#MISSING[@]} -gt 0 ]; then
   exit 1
 fi
 
+PACT_CLI_IMAGE=
+if [ "$pact_cli_image" ]; then
+    echo "You set pact cli image"
+    PACT_CLI_IMAGE="$pact_cli_image"
+else
+    PACT_CLI_IMAGE="pactfoundation/pact-cli:latest"
+fi
+
 CONTRACT_FILE_CONTENT_TYPE=${contract_content_type:-"application/yml"}
 VERIFICATION_RESULTS_CONTENT_TYPE=${verification_results_content_type:-"text/plain"}
 SPECIFICATION=${specification:-"oas"}
@@ -46,9 +54,9 @@ if [ "$verifier_version" ]; then
   VERIFIER_VERSION_COMMAND="--verifier-version $verifier_version"
 fi
 
-
 echo """
 PACT_BROKER_BASE_URL: $PACT_BROKER_BASE_URL
+pact_cli_image: $pact_cli_image
 contract: $contract
 verification_results: $verification_results
 verification_exit_code: $verification_exit_code
@@ -61,7 +69,7 @@ docker run --rm \
   -v ${PWD}:${PWD} \
   -e PACT_BROKER_BASE_URL=$PACT_BROKER_BASE_URL \
   -e PACT_BROKER_TOKEN=$PACT_BROKER_TOKEN \
-  pactfoundation/pact-cli:latest \
+  $PACT_CLI_IMAGE \
   pactflow publish-provider-contract \
   $contract \
   --provider $application_name \

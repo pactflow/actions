@@ -12,6 +12,14 @@ if [ ${#MISSING[@]} -gt 0 ]; then
   exit 1
 fi
 
+PACT_CLI_IMAGE=
+if [ "$pact_cli_image" ]; then
+    echo "You set pact cli image"
+    PACT_CLI_IMAGE="$pact_cli_image"
+else
+    PACT_CLI_IMAGE="pactfoundation/pact-cli:latest"
+fi
+
 OPTIONS=
 if [ -n "${error_when_not_found}" ]; then
   if [ "${error_when_not_found}" = "true" ]; then
@@ -42,6 +50,7 @@ fi
 
 echo "
   PACT_BROKER_BASE_URL: '$PACT_BROKER_BASE_URL'
+  pact_cli_image: '$pact_cli_image'
   application_name: '$application_name'
   branch: '$branch'
   error_when_not_found: $error_when_not_found
@@ -53,7 +62,7 @@ docker run --rm \
   $PACT_BROKER_TOKEN_ENV_VAR_CMD \
   $PACT_BROKER_USERNAME_ENV_VAR_CMD \
   $PACT_BROKER_PASSWORD_ENV_VAR_CMD \
-  pactfoundation/pact-cli:latest \
+  $PACT_CLI_IMAGE \
   broker delete-branch \
   --pacticipant "$application_name" \
   --branch "$branch" \

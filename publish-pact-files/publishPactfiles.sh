@@ -14,12 +14,21 @@ build_url="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_I
 
 echo """
 PACT_BROKER_BASE_URL: $PACT_BROKER_BASE_URL
+pact_cli_image: $pact_cli_image
 version: $version
 pactfiles: $pactfiles
 branch: $branch
 build_url: $build_url
 tag: $tag
 """
+
+PACT_CLI_IMAGE=
+if [ "$pact_cli_image" ]; then
+    echo "You set pact cli image"
+    PACT_CLI_IMAGE="$pact_cli_image"
+else
+    PACT_CLI_IMAGE="pactfoundation/pact-cli:latest"
+fi
 
 BRANCH_COMMAND=
 if [ "$branch" ]; then
@@ -72,7 +81,7 @@ docker run --rm \
   -e GITHUB_BASE_REF=$GITHUB_BASE_REF \
   -e GITHUB_REF=$GITHUB_REF \
   -e GITHUB_SHA=$GITHUB_SHA \
-  pactfoundation/pact-cli:latest \
+  $PACT_CLI_IMAGE \
   publish \
   $pactfiles \
   --auto-detect-version-properties \
