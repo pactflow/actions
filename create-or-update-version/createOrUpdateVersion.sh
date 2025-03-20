@@ -10,12 +10,14 @@ if [ ${#MISSING[@]} -gt 0 ]; then
   exit 1
 fi
 
+PACT_CLI_IMAGE_TAG=${pact_cli_image_tag:-"latest"}
+
 PACT_CLI_IMAGE=
 if [ "$pact_cli_image" ]; then
-    echo "INFO: using user-specified CLI image: ${pact_cli_image}"
-    PACT_CLI_IMAGE="$pact_cli_image"
+    echo "INFO: using user-specified CLI image: ${pact_cli_image}:${PACT_CLI_IMAGE_TAG}"
+    PACT_CLI_IMAGE="${pact_cli_image}:${PACT_CLI_IMAGE_TAG}"
 else
-    PACT_CLI_IMAGE="pactfoundation/pact-cli:latest"
+    PACT_CLI_IMAGE="pactfoundation/pact-cli:${PACT_CLI_IMAGE_TAG}"
 fi
 
 if [ "$version" == "" ]; then
@@ -50,7 +52,7 @@ fi
 
 echo "
 PACT_BROKER_BASE_URL: '$PACT_BROKER_BASE_URL'
-pact_cli_image: '$pact_cli_image'
+pact_cli_image: '$PACT_CLI_IMAGE'
 version: '$version'
 application_name: '$application_name'
 branch: '$branch'

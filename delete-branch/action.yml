@@ -5,7 +5,10 @@ branding:
   color: "green"
 inputs:
   pact_cli_image:
-    description: "Docker image to use for running pact-cli commands"
+    description: "Docker image to use for running pact-cli commands (defaults to the official PactFlow image)"
+    required: false
+  pact_cli_image_tag:
+    description: "Tag of the Docker image to use for running pact-cli commands (default: latest)"
     required: false
   broker_url:
     description: "The url of your pact broker"
@@ -40,6 +43,7 @@ runs:
         PACT_BROKER_USERNAME: ${{ inputs.username || env.PACT_BROKER_USERNAME }} 
         PACT_BROKER_PASSWORD: ${{ inputs.password || env.PACT_BROKER_PASSWORD }} 
         pact_cli_image: ${{ inputs.pact_cli_image || env.pact_cli_image }}
+        pact_cli_image_tag: ${{ inputs.pact_cli_image_tag }}
         application_name: ${{ inputs.application_name || env.application_name }}
         version: ${{ inputs.version || env.version }}
         branch: ${{ inputs.branch || env.branch }}

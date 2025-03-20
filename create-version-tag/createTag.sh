@@ -14,12 +14,14 @@ if [ ${#MISSING[@]} -gt 0 ]; then
   exit 1
 fi
 
+PACT_CLI_IMAGE_TAG=${pact_cli_image_tag:-"latest"}
+
 PACT_CLI_IMAGE=
 if [ "$pact_cli_image" ]; then
-    echo "INFO: using user-specified CLI image: ${pact_cli_image}"
-    PACT_CLI_IMAGE="$pact_cli_image"
+    echo "INFO: using user-specified CLI image: ${pact_cli_image}:${PACT_CLI_IMAGE_TAG}"
+    PACT_CLI_IMAGE="${pact_cli_image}:${PACT_CLI_IMAGE_TAG}"
 else
-    PACT_CLI_IMAGE="pactfoundation/pact-cli:latest"
+    PACT_CLI_IMAGE="pactfoundation/pact-cli:${PACT_CLI_IMAGE_TAG}"
 fi
 
 AUTO_CREATE_VERSION_COMMAND=
