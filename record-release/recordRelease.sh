@@ -17,7 +17,7 @@ fi
 
 PACT_CLI_IMAGE=
 if [ "$pact_cli_image" ]; then
-    echo "You set pact cli image"
+    echo "INFO: using user-specified CLI image: ${pact_cli_image}"
     PACT_CLI_IMAGE="$pact_cli_image"
 else
     PACT_CLI_IMAGE="pactfoundation/pact-cli:latest"
