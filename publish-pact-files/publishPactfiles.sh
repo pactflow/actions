@@ -12,22 +12,14 @@ fi
 
 build_url="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
 
-echo """
-PACT_BROKER_BASE_URL: $PACT_BROKER_BASE_URL
-pact_cli_image: $pact_cli_image
-version: $version
-pactfiles: $pactfiles
-branch: $branch
-build_url: $build_url
-tag: $tag
-"""
+PACT_CLI_IMAGE_TAG=${pact_cli_image_tag:-"latest"}
 
 PACT_CLI_IMAGE=
 if [ "$pact_cli_image" ]; then
-    echo "INFO: using user-specified CLI image: ${pact_cli_image}"
-    PACT_CLI_IMAGE="$pact_cli_image"
+    echo "INFO: using user-specified CLI image: ${pact_cli_image}:${PACT_CLI_IMAGE_TAG}"
+    PACT_CLI_IMAGE="${pact_cli_image}:${PACT_CLI_IMAGE_TAG}"
 else
-    PACT_CLI_IMAGE="pactfoundation/pact-cli:latest"
+    PACT_CLI_IMAGE="pactfoundation/pact-cli:${PACT_CLI_IMAGE_TAG}"
 fi
 
 BRANCH_COMMAND=
@@ -68,6 +60,15 @@ if [ "$PACT_BROKER_PASSWORD" ]; then
   PACT_BROKER_PASSWORD_ENV_VAR_CMD="-e PACT_BROKER_PASSWORD=$PACT_BROKER_PASSWORD"
 fi
 
+echo """
+PACT_BROKER_BASE_URL: $PACT_BROKER_BASE_URL
+pact_cli_image: $PACT_CLI_IMAGE
+version: $version
+pactfiles: $pactfiles
+branch: $branch
+build_url: $build_url
+tag: $tag
+"""
 
 
 docker run --rm \
