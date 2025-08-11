@@ -32,7 +32,7 @@ jobs:
           ]
 
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
+      - uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4
       - name: Use Node.js 18.x for ${{ matrix.action }}
         uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
@@ -50,7 +50,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       # MANDATORY: Must use 'checkout' first
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
+      - uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4
       - name: Publish provider contract on passing test run
         if: success()
         uses: ./publish-provider-contract
@@ -77,7 +77,7 @@ jobs:
     needs: pact-publish-oas-action
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
+      - uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4
       - uses: ./can-i-deploy
         with:
           to_environment: ${{ env.environment }}
@@ -89,7 +89,7 @@ jobs:
     needs: pact-can-i-deploy-provider
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
+      - uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4
       - uses: ./record-deployment
         with:
           environment: ${{ env.environment }}
@@ -102,7 +102,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       # MANDATORY: Must use 'checkout' first
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
+      - uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4
       - uses: ./publish-pact-files
         with:
           pactfiles: test/pact.json
@@ -113,7 +113,7 @@ jobs:
     needs: publish-pact-files
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
+      - uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4
       - uses: ./can-i-deploy
         with:
           application_name: ${{ env.application_name }}
@@ -125,7 +125,7 @@ jobs:
     needs: pact-can-i-deploy-consumer
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
+      - uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4
       - uses: ./record-deployment
         with:
           application_name: ${{ env.application_name }}
@@ -137,7 +137,7 @@ jobs:
     needs: pact-can-i-deploy-consumer
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
+      - uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4
       - uses: ./record-release
         with:
           application_name: ${{ env.application_name }}
@@ -149,7 +149,7 @@ jobs:
     needs: pact-record-deployment-consumer
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
+      - uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4
       - uses: ./create-version-tag
         with:
           application_name: ${{ env.application_name }}
@@ -162,7 +162,7 @@ jobs:
     needs: pact-record-deployment-consumer
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
+      - uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4
       - uses: ./create-or-update-version
         with:
           application_name: ${{ env.application_name }}
@@ -172,7 +172,7 @@ jobs:
     needs: pact-record-deployment-consumer
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
+      - uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4
       - uses: ./delete-branch
         if: github.event_name == 'push'
         with:
