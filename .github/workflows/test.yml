@@ -18,7 +18,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       # MANDATORY: Must use 'checkout' first
-      - uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5
       - name: Publish provider contract on passing test run
         if: success()
         uses: ./publish-provider-contract
@@ -41,7 +41,7 @@ jobs:
     needs: pact-publish-oas-action
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5
       - uses: ./can-i-deploy
         env:
           to_environment: ${{ env.environment }}
@@ -51,7 +51,7 @@ jobs:
     needs: pact-can-i-deploy-provider
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5
       - uses: ./record-deployment
         env:
           environment: ${{ env.environment }}
@@ -62,7 +62,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       # MANDATORY: Must use 'checkout' first
-      - uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5
       - uses: ./publish-pact-files
         env:
           pactfiles: test/pact.json
@@ -71,7 +71,7 @@ jobs:
     needs: publish-pact-files
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5
       - uses: ./can-i-deploy
         env:
           to_environment: ${{ env.environment }}
@@ -80,7 +80,7 @@ jobs:
     needs: pact-can-i-deploy-consumer
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5
       - uses: ./record-deployment
         env:
           environment: ${{ env.environment }}
@@ -89,7 +89,7 @@ jobs:
     needs: pact-record-deployment-consumer
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5
       - uses: ./create-version-tag
         env:
           tag: ${{ env.environment }}
@@ -98,5 +98,5 @@ jobs:
     needs: pact-record-deployment-consumer
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5
       - uses: ./create-or-update-version
