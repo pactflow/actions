@@ -31,6 +31,7 @@ inputs:
 runs:
   using: "composite"
   steps:
+    - uses: pact-foundation/pact-broker-cli@main
     - run: ${GITHUB_ACTION_PATH}/createOrUpdateVersion.sh
       shell: bash
       env: 

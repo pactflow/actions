@@ -4,6 +4,9 @@ runs:
   using: "composite"
   steps:
   # https://docs.github.com/en/actions/sharing-automations/creating-actions/metadata-syntax-for-github-actions#runsstepsrun
+    # install pact-broker-cli (rust)
+    - uses: pact-foundation/pact-broker-cli@main
+    # install pact-ruby-standalone
     - run: $GITHUB_ACTION_PATH/cli.sh
       shell: bash
     - name: add to path if windows

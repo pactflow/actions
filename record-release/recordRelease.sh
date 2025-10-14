@@ -48,13 +48,8 @@ echo "
   version: '$version'
   environment: '$environment'"
 
-docker run --rm \
-  -e PACT_BROKER_BASE_URL=$PACT_BROKER_BASE_URL \
-  $PACT_BROKER_TOKEN_ENV_VAR_CMD \
-  $PACT_BROKER_USERNAME_ENV_VAR_CMD \
-  $PACT_BROKER_PASSWORD_ENV_VAR_CMD \
-  $PACT_CLI_IMAGE \
-  broker record-release \
+pact-broker-cli \
+  record-release \
   --pacticipant "$application_name" \
   --version $version \
   --environment $environment

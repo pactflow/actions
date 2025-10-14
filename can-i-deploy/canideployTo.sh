@@ -107,13 +107,8 @@ echo "
   COMMAND: '$COMMAND'
   OPTIONS: '${OPTIONS[*]}'"
 
-docker run --rm \
-  -e PACT_BROKER_BASE_URL=$PACT_BROKER_BASE_URL \
-  $PACT_BROKER_TOKEN_ENV_VAR_CMD \
-  $PACT_BROKER_USERNAME_ENV_VAR_CMD \
-  $PACT_BROKER_PASSWORD_ENV_VAR_CMD \
-  $PACT_CLI_IMAGE \
-  broker can-i-deploy \
+pact-broker-cli \
+  can-i-deploy \
   --pacticipant "$application_name" \
   $VERSION \
   $COMMAND \

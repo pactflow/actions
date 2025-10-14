@@ -71,18 +71,7 @@ tag: $tag
 """
 
 
-docker run --rm \
-  -w ${PWD} \
-  -v ${PWD}:${PWD} \
-  -e PACT_BROKER_BASE_URL=$PACT_BROKER_BASE_URL \
-  $PACT_BROKER_TOKEN_ENV_VAR_CMD \
-  $PACT_BROKER_USERNAME_ENV_VAR_CMD \
-  $PACT_BROKER_PASSWORD_ENV_VAR_CMD \
-  -e GITHUB_HEAD_REF=$GITHUB_HEAD_REF \
-  -e GITHUB_BASE_REF=$GITHUB_BASE_REF \
-  -e GITHUB_REF=$GITHUB_REF \
-  -e GITHUB_SHA=$GITHUB_SHA \
-  $PACT_CLI_IMAGE \
+pact-broker-cli \
   publish \
   $pactfiles \
   --auto-detect-version-properties \

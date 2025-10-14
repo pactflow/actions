@@ -66,12 +66,7 @@ branch: $branch
 build_url: $build_url
 """
 
-docker run --rm \
-  -w ${PWD} \
-  -v ${PWD}:${PWD} \
-  -e PACT_BROKER_BASE_URL=$PACT_BROKER_BASE_URL \
-  -e PACT_BROKER_TOKEN=$PACT_BROKER_TOKEN \
-  $PACT_CLI_IMAGE \
+pact-broker-cli \
   pactflow publish-provider-contract \
   $contract \
   --provider $application_name \

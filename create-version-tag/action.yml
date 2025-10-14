@@ -34,6 +34,7 @@ inputs:
 runs:
   using: "composite"
   steps:
+    - uses: pact-foundation/pact-broker-cli@main
     - run: ${GITHUB_ACTION_PATH}/createTag.sh
       shell: bash
       env: 

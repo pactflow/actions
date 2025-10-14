@@ -62,17 +62,8 @@ if [ "$PACT_BROKER_PASSWORD" ]; then
   PACT_BROKER_PASSWORD_ENV_VAR_CMD="-e PACT_BROKER_PASSWORD=$PACT_BROKER_PASSWORD"
 fi
 
-docker run --rm \
-  -e PACT_BROKER_BASE_URL=$PACT_BROKER_BASE_URL \
-  $PACT_BROKER_TOKEN_ENV_VAR_CMD \
-  $PACT_BROKER_USERNAME_ENV_VAR_CMD \
-  $PACT_BROKER_PASSWORD_ENV_VAR_CMD \
-  -e GITHUB_HEAD_REF=$GITHUB_HEAD_REF \
-  -e GITHUB_BASE_REF=$GITHUB_BASE_REF \
-  -e GITHUB_REF=$GITHUB_REF \
-  -e GITHUB_SHA=$GITHUB_SHA \
-  $PACT_CLI_IMAGE \
-  broker create-version-tag \
+pact-broker-cli \
+  create-version-tag \
   --pacticipant "$application_name" \
   --version "$version" \
   --tag "$tag" \

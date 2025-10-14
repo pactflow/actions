@@ -32,6 +32,7 @@ inputs:
 runs:
   using: "composite"
   steps:
+    - uses: pact-foundation/pact-broker-cli@main
     - run: ${GITHUB_ACTION_PATH}/recordDeployment.sh
       shell: bash
       env: 

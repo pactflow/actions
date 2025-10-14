@@ -2,7 +2,7 @@ const { describe, it } = require("mocha");
 const assert = require("assert");
 const { spawnSync } = require("child_process");
 
-const dockerMock = "./test/unit/docker-mock.sh";
+const cliMock = "./test/unit/cli-mock.sh";
 const scriptTotest = "./deleteBranch.sh";
 
 const mandatoryVars = {
@@ -15,23 +15,10 @@ const optionalVars = {
   PACT_BROKER_TOKEN: "PACT_BROKER_TOKEN-set"
 };
 
-// Examines the generated docker call to check each element is in place when called with `mandatoryVars`.
-const dockerCallParameters = [
-  ['calls docker with "run --rm"', /docker run --rm/],
-  [
-    "sets PACT_BROKER_BASE_URL",
-    new RegExp(
-      `docker .* -e PACT_BROKER_BASE_URL=${mandatoryVars.PACT_BROKER_BASE_URL}`
-    ),
-  ],
-  [
-    "sets PACT_BROKER_TOKEN",
-    new RegExp(
-      `docker .* -e PACT_BROKER_TOKEN=${optionalVars.PACT_BROKER_TOKEN}`
-    ),
-  ],
-  ["uses latest pact-cli", /docker .* -e .*pactfoundation\/pact-cli:latest/],
-  ["uses delete-branch", /pact-cli.*broker delete-branch/],
+// Examines the generated cli call to check each element is in place when called with `mandatoryVars`.
+const cliCallParameters = [
+  ['calls pact-broker-cli', /pact-broker-cli/],
+  ["uses delete-branch", /pact-broker-cli delete-branch/],
   [
     "sets the pacticipant",
     new RegExp(`delete-branch.*--pacticipant ${mandatoryVars.application_name}`),
@@ -45,11 +32,11 @@ const dockerCallParameters = [
 
 // Runs the script we're testing, passing params etc....
 const spawnScript = (env = {...mandatoryVars, ...optionalVars}) =>
-  spawnSync(dockerMock, [scriptTotest], { env, shell: true });
+  spawnSync(cliMock, [scriptTotest], { env, shell: true });
 
 describe("deleteBranch", () => {
-  describe("docker command", () =>
-    dockerCallParameters.forEach(([description, matcher]) =>
+  describe("cli command", () =>
+    cliCallParameters.forEach(([description, matcher]) =>
       it(description, () => {
         const result = spawnScript();
 
