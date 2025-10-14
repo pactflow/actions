@@ -19,21 +19,8 @@ const optionalVars = {
 
 // Examines the generated cli call to check each element is in place when called with `mandatoryVars`.
 const cliCallParameters = [
-  ['calls cli with "run --rm"', /cli run --rm/],
-  [
-    "sets PACT_BROKER_BASE_URL",
-    new RegExp(
-      `cli .* -e PACT_BROKER_BASE_URL=${mandatoryVars.PACT_BROKER_BASE_URL}`
-    ),
-  ],
-  [
-    "sets PACT_BROKER_TOKEN",
-    new RegExp(
-      `cli .* -e PACT_BROKER_TOKEN=${optionalVars.PACT_BROKER_TOKEN}`
-    ),
-  ],
-  ["uses latest pact-cli", /cli .* -e .*pactfoundation\/pact-cli:latest/],
-  ["uses record-release", /pact-cli.*broker record-release/],
+  ['calls pact-broker-cli', /pact-broker-cli/],
+  ["uses record-release", /pact-broker-cli record-release/],
   [
     "sets the participant",
     new RegExp(

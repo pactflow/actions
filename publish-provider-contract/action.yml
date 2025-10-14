@@ -72,7 +72,7 @@ runs:
         verification_results_content_type: ${{ inputs.verification_results_content_type || env.REPORT_FILE_CONTENT_TYPE }}
         verification_results_format: ${{ inputs.verification_results_format }}
         verifier_version: ${{ inputs.verifier_version }}
-        verifier: ${{ inputs.verifier || env.VERIFIER_TOOL }}
+        verifier: ${{ inputs.verifier || env.VERIFIER_TOOL || 'github-actions' }}
         build_url: ${{ inputs.build_url }}
         version: ${{ inputs.version || env.version }}
         branch: ${{ inputs.branch || env.branch }}

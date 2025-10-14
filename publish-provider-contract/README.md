@@ -29,6 +29,7 @@ jobs:
           contract: src/oas/user.yml
           contract_content_type: application/yaml # optional, defaults to application/yml
           verification_results: src/results/report.md
+          verifier: "the testing tool used to verify the contract"
       - name: Publish provider contract on failing test run
         # ensure we publish results even if the tests fail
         if: failure()
@@ -42,6 +43,7 @@ jobs:
           verification_results: src/results/report.md
           # ensure we set the verification_exit_code to ensure we upload a failing self-verification result
           verification_exit_code: 1 # defaults to 0 (success)
+          verifier: "the testing tool used to verify the contract"
 ```
 
 ## Notes
