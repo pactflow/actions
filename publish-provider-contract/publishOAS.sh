@@ -31,7 +31,7 @@ VERIFICATION_RESULTS_CONTENT_TYPE=${verification_results_content_type:-"text/pla
 SPECIFICATION=${specification:-"oas"}
 verification_exit_code=${verification_exit_code:-0}
 
-verifier=${verifier:-'github-actions'}
+VERIFIER_TOOL=${verifier:-'github-actions'}
 VERIFICATION_RESULTS_FORMAT=${verification_results_format:-'text'}
 
 if [ "$branch" = "" ]; then
