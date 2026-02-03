@@ -14,7 +14,7 @@ env:
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-slim
 
     strategy:
       fail-fast: false
@@ -47,7 +47,7 @@ jobs:
 
   pact-publish-oas-action:
     # needs: test
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-slim
     steps:
       # MANDATORY: Must use 'checkout' first
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
@@ -75,7 +75,7 @@ jobs:
 
   pact-can-i-deploy-provider:
     needs: pact-publish-oas-action
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-slim
     steps:
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
       - uses: ./can-i-deploy
@@ -87,7 +87,7 @@ jobs:
 
   pact-record-deployment-provider:
     needs: pact-can-i-deploy-provider
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-slim
     steps:
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
       - uses: ./record-deployment
@@ -99,7 +99,7 @@ jobs:
 
   publish-pact-files:
     needs: pact-record-deployment-provider
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-slim
     steps:
       # MANDATORY: Must use 'checkout' first
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
@@ -111,7 +111,7 @@ jobs:
 
   pact-can-i-deploy-consumer:
     needs: publish-pact-files
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-slim
     steps:
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
       - uses: ./can-i-deploy
@@ -123,7 +123,7 @@ jobs:
 
   pact-record-deployment-consumer:
     needs: pact-can-i-deploy-consumer
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-slim
     steps:
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
       - uses: ./record-deployment
@@ -135,7 +135,7 @@ jobs:
 
   pact-record-release-consumer:
     needs: pact-can-i-deploy-consumer
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-slim
     steps:
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
       - uses: ./record-release
@@ -147,7 +147,7 @@ jobs:
 
   pact-create-version-tag:
     needs: pact-record-deployment-consumer
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-slim
     steps:
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
       - uses: ./create-version-tag
@@ -160,7 +160,7 @@ jobs:
 
   pact-create-or-update-version:
     needs: pact-record-deployment-consumer
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-slim
     steps:
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
       - uses: ./create-or-update-version
@@ -170,7 +170,7 @@ jobs:
           token: 129cCdfCWhMzcC9pFwb4bw
   pact-delete-branch:
     needs: pact-record-deployment-consumer
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-slim
     steps:
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
       - uses: ./delete-branch
