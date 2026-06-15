@@ -39,7 +39,7 @@ jobs:
     needs: test
     runs-on: ubuntu-latest
     steps:
-      - uses: K-Phoen/semver-release-action@master
+      - uses: K-Phoen/semver-release-action@1a1fc63a95a12b4bb535b53ab0d861bce53ce89d # master
         with:
           release_branch: main
         env:
