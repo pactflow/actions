@@ -16,7 +16,7 @@ jobs:
     steps:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7
       - id: pact-cli
-        uses: pactflow/actions@ab58ff6ba81341ed21be0c41828ed7fb69370313 # main
+        uses: ./
       - name: pact-broker on bash
         run: pact-broker help
         if: runner.os != 'windows'
