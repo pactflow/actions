@@ -15,7 +15,7 @@ if [ "$tag" ]; then
   PACT_CLI_VERSION="$tag"
 fi
 
-if [ -z "$PACT_CLI_VERSION"]; then
+if [ -z "$PACT_CLI_VERSION" ]; then
   PACT_CLI_VERSION=$(basename "$(curl -fs -o/dev/null -w "%{redirect_url}" https://github.com/pact-foundation/pact-standalone/releases/latest)")
   echo "Thanks for downloading the latest release of pact-standalone $PACT_CLI_VERSION."
   echo "-----"
@@ -47,14 +47,16 @@ case $(uname -sm) in
   if [ "$MAJOR_PACT_CLI_VERSION" -lt 2 ]; then
     os='osx'
   else
-    os='osx-arm64'
+    os='macos-arm64'
+    legacy_os='osx-arm64'
   fi
   ;;
 'Darwin x86' | 'Darwin x86_64')
   if [ "$MAJOR_PACT_CLI_VERSION" -lt 2 ]; then
     os='osx'
   else
-    os='osx-x86_64'
+    os='macos-x86_64'
+    legacy_os='osx-x86_64'
   fi
   ;;
 "Windows"* | "MINGW64"*)
@@ -75,20 +77,36 @@ case $os in
   filename="pact-${PACT_CLI_VERSION#v}-${os}.zip"
   ext=.bat
   ;;
-'osx'* | 'linux'*)
+'macos'* | 'osx'* | 'linux'*)
   filename="pact-${PACT_CLI_VERSION#v}-${os}.tar.gz"
   ;;
 esac
 
+if [ "$legacy_os" ]; then
+  legacy_filename="pact-${PACT_CLI_VERSION#v}-${legacy_os}.tar.gz"
+fi
+
+download_release_asset() {
+  curl -fsLO https://github.com/pact-foundation/pact-standalone/releases/download/"${PACT_CLI_VERSION}"/"$1"
+}
+
 echo "-------------"
 echo "Downloading:"
 echo "-------------"
-(curl -sLO https://github.com/pact-foundation/pact-standalone/releases/download/"${PACT_CLI_VERSION}"/"${filename}" && echo downloaded "${filename}") || (echo "Sorry, you'll need to install the pact-standalone manually." && exit 1)
+if download_release_asset "${filename}"; then
+  echo downloaded "${filename}"
+elif [ "$legacy_filename" ] && download_release_asset "${legacy_filename}"; then
+  filename="${legacy_filename}"
+  echo downloaded "${filename}"
+else
+  echo "Sorry, you'll need to install the pact-standalone manually."
+  exit 1
+fi
 case $os in
 'windows'* | 'win32')
   (unzip "${filename}" && echo unarchived "${filename}") || (echo "Sorry, you'll need to unarchived the pact-standalone manually." && exit 1)
   ;;
-'osx'* | 'linux'*)
+'macos'* | 'osx'* | 'linux'*)
   (tar xzf "${filename}" && echo unarchived "${filename}") || (echo "Sorry, you'll need to unarchived the pact-standalone manually." && exit 1)
   ;;
 esac
