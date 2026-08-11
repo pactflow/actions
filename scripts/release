@@ -17,6 +17,8 @@ VERSION_FILE="${ROOT}/VERSION"
 CHANGELOG_FILE="${ROOT}/CHANGELOG.md"
 RELEASE_BRANCH="release/actions"
 TAG_PREFIX="v"
+TAG_WAIT_ATTEMPTS=5
+TAG_WAIT_SECONDS=15
 
 DRY_RUN=false
 
@@ -113,6 +115,26 @@ ensure_github_token() {
 
 # MARK: Git
 
+# Whether a tag exists, re-fetching before giving up.
+#
+# Merging the release PR fires this workflow twice: once for the push to main
+# and once for the closed pull request. They are separate runs on separate
+# refs, so they are not serialised, and the tag job usually pushes the tag
+# after the prepare job has already checked out. Waiting distinguishes a tag
+# that is moments away from one that was never created at all.
+tag_exists() {
+  local tag="$1" attempt
+  for attempt in $(seq 1 "${TAG_WAIT_ATTEMPTS}"); do
+    [[ -n "$(git -C "${ROOT}" tag -l "${tag}")" ]] && return 0
+    ((attempt == TAG_WAIT_ATTEMPTS)) && break
+    log "Tag ${tag} is not present yet; waiting for the tag job" \
+      "(attempt ${attempt}/${TAG_WAIT_ATTEMPTS})."
+    sleep "${TAG_WAIT_SECONDS}"
+    git -C "${ROOT}" fetch --quiet --tags origin || true
+  done
+  return 1
+}
+
 configure_git() {
   local key value
   for key in user.name user.email; do
@@ -172,7 +194,7 @@ cmd_prepare() {
     # A missing tag here means a previous release merged but never got tagged.
     # Left alone, every future run would take this branch and report success,
     # stalling releases silently until the next major bump.
-    if [[ -z "$(git -C "${ROOT}" tag -l "${TAG_PREFIX}${current}")" ]]; then
+    if ! tag_exists "${TAG_PREFIX}${current}"; then
       die "VERSION is ${current} but tag ${TAG_PREFIX}${current} does not
 exist: a previous release merged without being tagged, and no further release
 can be prepared until it is. Fetch tags ('git fetch --tags origin') to rule out
