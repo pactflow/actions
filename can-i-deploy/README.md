@@ -11,7 +11,7 @@ jobs:
   pact-can-i-deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: pactflow/actions/can-i-deploy@v2
+      - uses: pactflow/actions/can-i-deploy@v2.0.0
         with:
           application_name: "my-consumer-app" # The pacticipant name of which to check if it safe to deploy
           broker_url: ${{ secrets.PACT_BROKER_BASE_URL }} # The base URL of the Pact Broker

@@ -11,7 +11,7 @@ jobs:
     steps:
       # MANDATORY: Must use 'checkout' first
       - uses: actions/checkout@v4
-      - uses: pactflow/actions/publish-pact-files@v2
+      - uses: pactflow/actions/publish-pact-files@v2.0.0
         with:
           pactfiles: src/pactfiles
           version: "1.2.3" # optional, defaults to git sha if not specified
