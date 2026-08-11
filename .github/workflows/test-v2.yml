@@ -14,6 +14,9 @@ on:
       - ready_for_review
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 env:
   version: ${{ github.sha }}
   environment: production
@@ -208,8 +211,12 @@ jobs:
     if: github.event_name == 'pull_request' && github.event.pull_request.draft != true
 
     steps:
+      # The default `pull_request` ref is the synthetic merge commit, which
+      # `committed` rejects because merge commits are disallowed. Lint the head
+      # branch itself instead.
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
+          ref: ${{ github.event.pull_request.head.sha }}
           fetch-depth: 0
 
       - name: Install committed
@@ -217,13 +224,15 @@ jobs:
         with:
           tool: committed
 
-      # checkout does not leave the base branch as a local ref, so fetch it
-      # before asking committed for a range against it.
-      - name: Fetch base branch
-        run: git fetch --no-tags origin "${{ github.base_ref }}"
+      # Checking out a bare SHA only fetches history reachable from it, and the
+      # base tip need not be an ancestor of the head, so fetch it explicitly.
+      - name: Fetch base commit
+        run: git fetch --no-tags origin "${{ github.event.pull_request.base.sha }}"
 
       - name: Check commit messages
-        run: committed FETCH_HEAD..HEAD
+        run: >-
+          committed
+          "${{ github.event.pull_request.base.sha }}..${{ github.event.pull_request.head.sha }}"
 
   release-script:
     name: Check release script
@@ -269,9 +278,11 @@ jobs:
       - release-script
 
     steps:
+      # A draft PR skips every guarded job, which would otherwise leave the
+      # gate green; report red until the PR is marked ready for review.
       - name: Failed
         run: exit 1
         if: >-
           contains(needs.*.result, 'failure')
           || contains(needs.*.result, 'cancelled')
-
+          || github.event.pull_request.draft == true

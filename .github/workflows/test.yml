@@ -14,6 +14,9 @@ on:
       - ready_for_review
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 env:
   version: ${{ github.sha }}-v1
   environment: production
@@ -134,8 +137,11 @@ jobs:
       - pact-create-or-update-version
 
     steps:
+      # A draft PR skips every guarded job, which would otherwise leave the
+      # gate green; report red until the PR is marked ready for review.
       - name: Failed
         run: exit 1
         if: >-
           contains(needs.*.result, 'failure')
           || contains(needs.*.result, 'cancelled')
+          || github.event.pull_request.draft == true

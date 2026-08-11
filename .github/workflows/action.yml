@@ -1,4 +1,4 @@
-name: Test pactflow/actions@main
+name: Test pact CLI action
 
 on:
   push:
@@ -13,6 +13,9 @@ on:
       - reopened
       - ready_for_review
   workflow_dispatch:
+
+permissions:
+  contents: read
 
 jobs:
   test_cli_action:
@@ -65,8 +68,11 @@ jobs:
       - test_cli_action
 
     steps:
+      # A draft PR skips every guarded job, which would otherwise leave the
+      # gate green; report red until the PR is marked ready for review.
       - name: Failed
         run: exit 1
         if: >-
           contains(needs.*.result, 'failure')
           || contains(needs.*.result, 'cancelled')
+          || github.event.pull_request.draft == true
