@@ -1,46 +1,102 @@
-name: Actions Release
+---
+name: release
 
 on:
+  push:
+    branches:
+      - main
+    tags:
+      - v*
+  pull_request:
+    branches:
+      - main
+    types:
+      - closed
   workflow_dispatch:
 
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref || github.run_id }}
+  cancel-in-progress: false
+
+env:
+  FORCE_COLOR: '1'
+  CLICOLOR: '1'
+
 jobs:
-  test:
+  prepare:
+    name: Update release PR
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
 
-    strategy:
-      fail-fast: false
-      matrix:
-        node-version: [16.x]
-        action: [
-            can-i-deploy,
-            create-version-tag,
-            publish-pact-files,
-            publish-provider-contract,
-            record-deployment,
-            record-release,
-            create-or-update-version,
-          ]
-
     steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
-      - name: Use Node.js 16.x for ${{ matrix.action }}
-        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+      - uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1  # v3.2.0
+        id: app-token
         with:
-          node-version: 24.x
-          cache: "npm"
-          cache-dependency-path: ${{ matrix.action }}/package-lock.json
-      - run: npm ci
-        working-directory: ${{ matrix.action }}
-      - run: npm run test:unit
-        name: test ${{ matrix.action }}
-        working-directory: ${{ matrix.action }}
+          app-id: ${{ vars.PACTFLOW_CI_BOT_APP_ID }}
+          private-key: ${{ secrets.PACTFLOW_CI_BOT_PRIVATE_KEY }}
 
-  release:
-    needs: test
-    runs-on: ubuntu-latest
-    steps:
-      - uses: K-Phoen/semver-release-action@1a1fc63a95a12b4bb535b53ab0d861bce53ce89d # master
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7
         with:
-          release_branch: main
+          fetch-depth: 0
+          token: ${{ steps.app-token.outputs.token }}
+
+      - name: Install git-cliff and typos
+        uses: taiki-e/install-action@c44f6b046f1c29ae5918b1e0bfdbb2f1813836fd  # v2.84.1
+        with:
+          tool: git-cliff,typos
+
+      - name: Update release PR
+        run: scripts/release prepare
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+
+  tag:
+    name: Create release tag
+    if: >-
+      github.event_name == 'pull_request'
+      && github.event.pull_request.merged == true
+      && github.event.pull_request.head.ref == 'release/actions'
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1  # v3.2.0
+        id: app-token
+        with:
+          app-id: ${{ vars.PACTFLOW_CI_BOT_APP_ID }}
+          private-key: ${{ secrets.PACTFLOW_CI_BOT_PRIVATE_KEY }}
+
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7
+        with:
+          ref: ${{ github.event.pull_request.merge_commit_sha }}
+          fetch-depth: 0
+          token: ${{ steps.app-token.outputs.token }}
+
+      # Pushed with the app token, not GITHUB_TOKEN: a tag pushed with
+      # GITHUB_TOKEN does not trigger the publish job below.
+      - name: Create and push release tag
+        run: scripts/release tag
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+
+  publish:
+    name: Publish GitHub release
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7
+
+      - name: Create GitHub release
+        run: |
+          scripts/release notes "${GITHUB_REF_NAME#v}" > release-notes.md
+          gh release create "${GITHUB_REF_NAME}" \
+            --title "${GITHUB_REF_NAME}" \
+            --notes-file release-notes.md
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
