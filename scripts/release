@@ -15,7 +15,6 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 VERSION_FILE="${ROOT}/VERSION"
 CHANGELOG_FILE="${ROOT}/CHANGELOG.md"
-# shellcheck disable=SC2034
 RELEASE_BRANCH="release/actions"
 TAG_PREFIX="v"
 
@@ -39,6 +38,34 @@ read_version() {
 }
 
 write_version() { printf '%s\n' "$1" >"${VERSION_FILE}"; }
+
+# MARK: Changelog
+
+# Version git-cliff proposes for the unreleased commits, without the prefix.
+# Empty when there is nothing to release.
+proposed_version() {
+  local bumped
+  bumped="$(git -C "${ROOT}" cliff --bumped-version 2>/dev/null || true)"
+  printf '%s' "${bumped#"${TAG_PREFIX}"}"
+}
+
+changelog_body() {
+  git -C "${ROOT}" cliff \
+    --tag "${TAG_PREFIX}$1" --unreleased --strip header
+}
+
+pr_body() {
+  cat <<EOF
+> [!IMPORTANT]
+> **\`VERSION\` and \`CHANGELOG.md\` are the source of truth**, not this title
+> or description. The release tag is created from \`VERSION\` as it exists in
+> the merge commit. To override either, push a commit to this branch before
+> merging — but note that any subsequent push to \`main\` resets this branch
+> and discards manual changes.
+
+$1
+EOF
+}
 
 # MARK: GitHub
 
@@ -77,10 +104,77 @@ configure_git() {
   done
 }
 
+push_release_branch() {
+  git -C "${ROOT}" checkout -B "${RELEASE_BRANCH}" origin/main
+  git -C "${ROOT}" add VERSION CHANGELOG.md
+  if git -C "${ROOT}" diff --cached --quiet; then
+    log "Release branch already matches the proposed release; nothing to push."
+    return 0
+  fi
+  git -C "${ROOT}" commit -m "$1"
+  git -C "${ROOT}" push --force origin "${RELEASE_BRANCH}"
+}
+
+upsert_pull_request() {
+  local number
+  number="$(gh pr list --head "${RELEASE_BRANCH}" --state open \
+    --json number --jq 'first.number // empty')"
+  if [[ -n ${number} ]]; then
+    gh pr edit "${number}" --title "$1" --body "$2"
+    log "Updated release PR #${number}."
+  else
+    gh pr create --title "$1" --body "$2" \
+      --base main --head "${RELEASE_BRANCH}" --draft
+    log "Created draft release PR."
+  fi
+}
+
 # MARK: Commands
 
 cmd_prepare() {
-  die "not implemented yet"
+  local current proposed title body
+
+  command -v git-cliff >/dev/null || die "git-cliff is not installed"
+  ensure_github_token
+
+  current="$(read_version)"
+  proposed="$(proposed_version)"
+
+  if [[ -z ${proposed} ]]; then
+    log "git-cliff proposed no bump; nothing to release."
+    return 0
+  fi
+  if [[ ${proposed} == "${current}" ]]; then
+    log "Already at ${current}; nothing to release."
+    return 0
+  fi
+
+  log "Proposed next version: ${proposed} (current: ${current})"
+
+  # Rendered before the files are touched, so the body reflects exactly the
+  # commits being released.
+  body="$(pr_body "$(changelog_body "${proposed}")")"
+  title="chore(release): ${TAG_PREFIX}${proposed}"
+
+  write_version "${proposed}"
+  # git-cliff --prepend fails with a bare IO error on a missing file.
+  [[ -f ${CHANGELOG_FILE} ]] || die "${CHANGELOG_FILE} does not exist"
+  git -C "${ROOT}" cliff \
+    --tag "${TAG_PREFIX}${proposed}" --unreleased --prepend "${CHANGELOG_FILE}"
+
+  if [[ ${DRY_RUN} == true ]]; then
+    log ""
+    log "[dry-run] Would open or update: ${title}"
+    log "[dry-run] Files written. Inspect with 'git diff'; revert with"
+    log "[dry-run]   git checkout -- VERSION CHANGELOG.md"
+    return 0
+  fi
+
+  configure_git
+  # shellcheck disable=SC2064
+  trap "git -C '${ROOT}' checkout main" RETURN
+  push_release_branch "${title}"
+  upsert_pull_request "${title}" "${body}"
 }
 
 cmd_tag() {
