@@ -1,0 +1,158 @@
+#!/usr/bin/env bash
+# Release management for pactflow/actions.
+#
+# Usage:
+#   scripts/release prepare [--dry-run] [--debug]
+#   scripts/release tag     [--dry-run] [--debug]
+#   scripts/release notes VERSION
+#
+# `prepare` refreshes the draft release PR from main. `tag` reads VERSION and
+# pushes the corresponding tag. VERSION and CHANGELOG.md are the source of
+# truth; git-cliff only proposes what VERSION should say.
+
+set -euo pipefail
+
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+VERSION_FILE="${ROOT}/VERSION"
+CHANGELOG_FILE="${ROOT}/CHANGELOG.md"
+# shellcheck disable=SC2034
+RELEASE_BRANCH="release/actions"
+TAG_PREFIX="v"
+
+DRY_RUN=false
+
+log() { printf '%s\n' "$*" >&2; }
+die() {
+  printf 'error: %s\n' "$*" >&2
+  exit 1
+}
+
+# MARK: Version file
+
+read_version() {
+  [[ -f ${VERSION_FILE} ]] || die "${VERSION_FILE} does not exist"
+  local version
+  version="$(tr -d '[:space:]' <"${VERSION_FILE}")"
+  [[ ${version} =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] ||
+    die "malformed version in ${VERSION_FILE}: '${version}'"
+  printf '%s' "${version}"
+}
+
+write_version() { printf '%s\n' "$1" >"${VERSION_FILE}"; }
+
+# MARK: GitHub
+
+# The changelog template renders a contributors list, so every git-cliff
+# invocation calls the GitHub API. Without a token the API returns 403 and
+# git-cliff panics.
+ensure_github_token() {
+  [[ -n ${GITHUB_TOKEN:-} ]] && return 0
+  if [[ -n ${GH_TOKEN:-} ]]; then
+    export GITHUB_TOKEN="${GH_TOKEN}"
+    return 0
+  fi
+  if [[ -z ${CI:-} ]] && command -v gh >/dev/null; then
+    local token
+    token="$(gh auth token 2>/dev/null || true)"
+    if [[ -n ${token} ]]; then
+      export GITHUB_TOKEN="${token}"
+      return 0
+    fi
+  fi
+  log "warning: no GitHub token found; git-cliff may fail or be rate-limited."
+}
+
+# MARK: Git
+
+configure_git() {
+  local key value
+  for key in user.name user.email; do
+    case "${key}" in
+      user.name) value="github-actions[bot]" ;;
+      *) value="github-actions[bot]@users.noreply.github.com" ;;
+    esac
+    if [[ -z "$(git -C "${ROOT}" config --get "${key}" || true)" ]]; then
+      git -C "${ROOT}" config "${key}" "${value}"
+    fi
+  done
+}
+
+# MARK: Commands
+
+cmd_prepare() {
+  die "not implemented yet"
+}
+
+cmd_tag() {
+  local version tag
+  version="$(read_version)"
+  tag="${TAG_PREFIX}${version}"
+
+  git -C "${ROOT}" fetch --tags origin
+  if [[ -n "$(git -C "${ROOT}" tag -l "${tag}")" ]]; then
+    log "Tag ${tag} already exists; nothing to do."
+    return 0
+  fi
+
+  if [[ ${DRY_RUN} == true ]]; then
+    log "[dry-run] Would create and push tag ${tag}."
+    return 0
+  fi
+
+  git -C "${ROOT}" tag "${tag}"
+  git -C "${ROOT}" push origin "${tag}"
+  log "Tag ${tag} pushed."
+}
+
+cmd_notes() {
+  local version="$1"
+  [[ -n ${version} ]] || die "'notes' requires a version argument"
+  [[ -f ${CHANGELOG_FILE} ]] || die "${CHANGELOG_FILE} does not exist"
+
+  local section
+  section="$(awk -v v="${version}" '
+    $0 ~ "^## \\[" v "\\]" { found = 1; next }
+    found && /^## \[/      { exit }
+    found                  { print }
+  ' "${CHANGELOG_FILE}")"
+
+  [[ -n ${section//[[:space:]]/} ]] ||
+    die "no changelog section found for ${version}"
+
+  printf '%s\n' "${section}"
+}
+
+# MARK: Entry point
+
+main() {
+  local command="" notes_version=""
+
+  while (($# > 0)); do
+    case "$1" in
+      prepare | tag) command="$1" ;;
+      notes)
+        command="notes"
+        notes_version="${2:-}"
+        (($# >= 2)) && shift
+        ;;
+      --dry-run) DRY_RUN=true ;;
+      --debug) set -x ;;
+      -h | --help)
+        sed -n '2,11p' "${BASH_SOURCE[0]}" | sed 's/^# \{0,1\}//'
+        return 0
+        ;;
+      *) die "unknown argument: $1" ;;
+    esac
+    shift
+  done
+
+  [[ -n ${command} ]] || die "expected 'prepare', 'tag' or 'notes'"
+
+  case "${command}" in
+    prepare) cmd_prepare ;;
+    tag) cmd_tag ;;
+    notes) cmd_notes "${notes_version}" ;;
+  esac
+}
+
+main "$@"
