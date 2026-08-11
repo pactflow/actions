@@ -59,6 +59,7 @@ jobs:
       github.event_name == 'pull_request'
       && github.event.pull_request.merged == true
       && github.event.pull_request.head.ref == 'release/actions'
+      && github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
 
     steps:
@@ -92,11 +93,19 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7
 
+      # `gh release create` fails if the release exists, so re-running this job
+      # after a partial failure edits the existing release instead.
       - name: Create GitHub release
         run: |
           scripts/release notes "${GITHUB_REF_NAME#v}" > release-notes.md
-          gh release create "${GITHUB_REF_NAME}" \
-            --title "${GITHUB_REF_NAME}" \
-            --notes-file release-notes.md
+          if gh release view "${GITHUB_REF_NAME}" >/dev/null 2>&1; then
+            gh release edit "${GITHUB_REF_NAME}" \
+              --title "${GITHUB_REF_NAME}" \
+              --notes-file release-notes.md
+          else
+            gh release create "${GITHUB_REF_NAME}" \
+              --title "${GITHUB_REF_NAME}" \
+              --notes-file release-notes.md
+          fi
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
