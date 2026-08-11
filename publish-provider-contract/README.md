@@ -20,7 +20,7 @@ jobs:
       - uses: actions/checkout@v4
       - name: Publish provider contract on passing test run
         if: success()
-        uses: pactflow/actions/publish-provider-contract@v2
+        uses: pactflow/actions/publish-provider-contract@v2.0.0
         with:
           version: "1.2.3"
           application_name: "my-api-provider"
@@ -32,7 +32,7 @@ jobs:
       - name: Publish provider contract on failing test run
         # ensure we publish results even if the tests fail
         if: failure()
-        uses: pactflow/actions/publish-provider-contract@v2
+        uses: pactflow/actions/publish-provider-contract@v2.0.0
         with:
           version: "1.2.3"
           application_name: "my-api-provider"

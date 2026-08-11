@@ -10,7 +10,7 @@ jobs:
     needs: can-i-deploy
     runs-on: ubuntu-latest
     steps:
-      - uses: pactflow/actions/record-deployment@v2
+      - uses: pactflow/actions/record-deployment@v2.0.0
         with:
           version: "1.0.1" # defaults to git sha if not specified
           environment: "test"

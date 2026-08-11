@@ -9,7 +9,7 @@ jobs:
   pact-create-tag:
     runs-on: ubuntu-latest
     steps:
-      - uses: pactflow/actions/create-version-tag@v2
+      - uses: pactflow/actions/create-version-tag@v2.0.0
         with:
           tag: prod
           version: "1.2.3" # autodetected if not provided

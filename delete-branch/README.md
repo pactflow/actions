@@ -9,7 +9,7 @@ jobs:
   pact-delete-branch:
     runs-on: ubuntu-latest
     steps:
-      - uses: pactflow/actions/delete-branch@v2
+      - uses: pactflow/actions/delete-branch@v2.0.0
         with:
           application_name: "my-consumer-app" # The pacticipant name of which the branch belongs to
           broker_url: ${{ secrets.PACT_BROKER_BASE_URL }} # The base URL of the Pact Broker
