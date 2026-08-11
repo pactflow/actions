@@ -6,11 +6,12 @@ All notable changes to this project will be documented in this file.
 <!-- markdownlint-disable emph-style -->
 <!-- markdownlint-disable strong-style -->
 
-## [2.0.0] _2024-10-22_
+## [2.0.0] _2025-08-05_
 
 ### 🚀 Features
 
 -   [**breaking**] Various updates, see details
+-   Allow custom pact cli image (#75)
 
 ### 🐛 Bug Fixes
 
@@ -18,10 +19,27 @@ All notable changes to this project will be documented in this file.
 -   _(publish-provider-contract)_ Ensure branch is set from input
 -   _(publish-provider-contract)_ Contract/specification input description
 -   _(publish-provider-contract)_ Pass specification as env var to script
+-   Rename pact-ruby-standalone to pact-standalone
+
+### 🚜 Refactor
+
+-   Split image and tag to align pact-publish-files with other actions
+
+### ⚙️ Miscellaneous Tasks
+
+-   _(ci)_ Add pr notification
+-   _(ci)_ Run workflow on node 18
+-   _(ci)_ Node 18 on job
+-   _(test)_ Delete-branch mocha bin is now _mocha?
+-   Move test broker credentials out of secrets
 
 ### Contributors
 
 -   @YOU54F
+-   @valerio-iachini
+-   @mefellows
+-   @cando
+-   @JP-Ellis
 
 ## [1.2.1] _2024-05-17_
 

@@ -30,7 +30,7 @@ Or, for the strongest supply-chain guarantee, pin to the commit SHA and let
 Renovate or Dependabot keep it current:
 
 ```yml
-- uses: pactflow/actions/can-i-deploy@2b4e9b508f6b0eb9db3350562c3adc1a75977161 # v2.0.0
+- uses: pactflow/actions/can-i-deploy@3074b72c0df6af10087afccfa6f91e2308dc151c # v2.0.0
 ```
 
 Do **not** use `@main`. It is a moving reference that changes with every
