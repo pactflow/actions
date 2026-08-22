@@ -220,7 +220,7 @@ jobs:
           fetch-depth: 0
 
       - name: Install committed
-        uses: taiki-e/install-action@91ddec75689c4c78665b598d188dc821c5a43e5c # v2.85.9
+        uses: taiki-e/install-action@5b4d68e2e660441203ab128a23676f1e4faf1532 # v2.86.3
         with:
           tool: committed
 
@@ -245,7 +245,7 @@ jobs:
           fetch-depth: 0
 
       - name: Install git-cliff and typos
-        uses: taiki-e/install-action@91ddec75689c4c78665b598d188dc821c5a43e5c # v2.85.9
+        uses: taiki-e/install-action@5b4d68e2e660441203ab128a23676f1e4faf1532 # v2.86.3
         with:
           tool: git-cliff,typos
 
