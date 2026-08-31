@@ -6,6 +6,40 @@ All notable changes to this project will be documented in this file.
 <!-- markdownlint-disable emph-style -->
 <!-- markdownlint-disable strong-style -->
 
+## [2.1.0] _2026-08-31_
+
+### 🚀 Features
+
+-   Add release script with tag and notes commands
+-   Add release prepare command
+-   _(ci)_ Replace release workflow with pr-based process
+-   _(ci)_ Gate tests on ready-for-review and lint commits
+
+### 🐛 Bug Fixes
+
+-   Install the pact CLI on macOS again
+-   Invoke mocha through its published binary
+-   Repoint v2.0.0 baseline at the commit v2 actually ships
+-   _(ci)_ Lint the pr head branch and tighten workflow guards
+-   _(release)_ Fail loudly instead of stalling releases
+-   Wait for the release tag before reporting a stalled release
+
+### 📚 Documentation
+
+-   Document versioning and the release process
+-   Point sub-action examples at the frozen v2.0.0 tag
+
+### ⚙️ Miscellaneous Tasks
+
+-   _(ci)_ Remove pr notification workflow
+-   _(ci)_ Use relative path for self reference
+-   Add changelog and version baseline
+-   Remove the dead release trigger and fix a comment typo
+
+### Contributors
+
+-   @JP-Ellis
+
 ## [2.0.0] _2025-08-05_
 
 ### 🚀 Features
