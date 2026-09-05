@@ -43,7 +43,7 @@ jobs:
           token: ${{ steps.app-token.outputs.token }}
 
       - name: Install git-cliff and typos
-        uses: taiki-e/install-action@5b4d68e2e660441203ab128a23676f1e4faf1532  # v2.86.3
+        uses: taiki-e/install-action@1ed6d7be6168f6c9046541087ff549b6bc581fdf  # v2.87.2
         with:
           tool: git-cliff,typos
 
