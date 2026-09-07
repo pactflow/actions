@@ -16,6 +16,7 @@ ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 VERSION_FILE="${ROOT}/VERSION"
 CHANGELOG_FILE="${ROOT}/CHANGELOG.md"
 RELEASE_BRANCH="release/actions"
+BASE_REF="origin/main"
 TAG_PREFIX="v"
 TAG_WAIT_ATTEMPTS=5
 TAG_WAIT_SECONDS=15
@@ -30,13 +31,31 @@ die() {
 
 # MARK: Version file
 
+parse_version() {
+  local version
+  version="$(tr -d '[:space:]' <<<"$1")"
+  [[ ${version} =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] ||
+    die "malformed version in $2: '${version}'"
+  printf '%s' "${version}"
+}
+
 read_version() {
   [[ -f ${VERSION_FILE} ]] || die "${VERSION_FILE} does not exist"
-  local version
-  version="$(tr -d '[:space:]' <"${VERSION_FILE}")"
-  [[ ${version} =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] ||
-    die "malformed version in ${VERSION_FILE}: '${version}'"
-  printf '%s' "${version}"
+  parse_version "$(cat "${VERSION_FILE}")" "${VERSION_FILE}"
+}
+
+# The released version, read from main rather than from the checkout.
+#
+# `prepare` builds the release branch from main, so main's VERSION is the last
+# version to have been released. On the release branch VERSION already holds
+# the *proposed* version, and comparing against that would read a pending
+# release as one that merged without ever being tagged.
+released_version() {
+  local raw
+  raw="$(git -C "${ROOT}" show "${BASE_REF}:VERSION" 2>/dev/null)" ||
+    die "cannot read ${BASE_REF}:VERSION: fetch main ('git fetch origin main')
+and re-run. 'prepare' compares against main, so it cannot run without it."
+  parse_version "${raw}" "${BASE_REF}:VERSION"
 }
 
 write_version() { printf '%s\n' "$1" >"${VERSION_FILE}"; }
@@ -183,7 +202,7 @@ cmd_prepare() {
   command -v typos >/dev/null || die "typos is not installed"
   ensure_github_token
 
-  current="$(read_version)"
+  current="$(released_version)"
   proposed="$(proposed_version)"
 
   if [[ -z ${proposed} ]]; then
@@ -195,11 +214,11 @@ cmd_prepare() {
     # Left alone, every future run would take this branch and report success,
     # stalling releases silently until the next major bump.
     if ! tag_exists "${TAG_PREFIX}${current}"; then
-      die "VERSION is ${current} but tag ${TAG_PREFIX}${current} does not
-exist: a previous release merged without being tagged, and no further release
-can be prepared until it is. Fetch tags ('git fetch --tags origin') to rule out
-a stale clone, then re-run the failed release workflow or create the tag
-manually with 'scripts/release tag' on the commit that set VERSION."
+      die "VERSION on main is ${current} but tag ${TAG_PREFIX}${current} does
+not exist: a previous release merged without being tagged, and no further
+release can be prepared until it is. Fetch tags ('git fetch --tags origin') to
+rule out a stale clone, then re-run the failed release workflow or create the
+tag manually with 'scripts/release tag' on the commit that set VERSION."
     fi
     log "Already at ${current}; nothing to release."
     return 0
